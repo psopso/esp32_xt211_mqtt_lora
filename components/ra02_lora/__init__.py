@@ -20,16 +20,16 @@ CONFIG_SCHEMA = cv.Schema({
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
-    await spi.register_spi_device(var, config) # Propojí CS pin a SPI bus
-    
-    if "reset_pin" in config:
-        # await cg.gpio_pin_expression vytvoří z konfigurace C++ objekt
-        reset_pin = await cg.gpio_pin_expression(config["reset_pin"])
-        cg.add(var.set_reset_pin(reset_pin))
+    await spi.register_spi_device(var, config)
 
     if CONF_CS_PIN in config:
-        cs_pin = await cg.gpio_pin_expression(config[CONF_CS_PIN])
+        # Důležité: Každý await musí mít svůj řádek a unikátní proměnnou
+        cs_pin = await cg.gpio_pin_expression(config["cs_pin"])
         cg.add(var.set_cs_pin(cs_pin))
+
+    if "reset_pin" in config:
+        reset_pin = await cg.gpio_pin_expression(config["reset_pin"])
+        cg.add(var.set_reset_pin(reset_pin))
 
     if "dio0_pin" in config:
         dio0_pin = await cg.gpio_pin_expression(config["dio0_pin"])
