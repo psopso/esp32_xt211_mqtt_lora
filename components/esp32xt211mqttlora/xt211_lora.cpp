@@ -5,6 +5,7 @@ namespace esp32xt211mqttlora {
 static const char *TAG = "esp32xt211mqttlora";
 
 bool setuprun = false;
+bool firstrun = true;
 int counter = 0;
 
 void MyComponent::dump_config() {
@@ -25,6 +26,11 @@ void MyComponent::setup() {
 }
 
 void MyComponent::loop() {
+  if (!firstrun) {
+    firstrun = false;
+    ESP_LOGI(TAG, "First Loop %d", setuprun);
+  }
+
   auto now = esphome::millis();
 
   if (now - last_log_time > 10000) {
