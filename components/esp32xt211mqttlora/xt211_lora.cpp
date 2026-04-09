@@ -14,7 +14,7 @@ void MyComponent::dump_config() {
 }
 
 void MyComponent::setup() {
-  esphome::delay(10000);
+  esphome::delay(2000);
   ESP_LOGCONFIG(TAG, "Setup OK");
   ESP_LOGI(TAG, "MOSI: %d", mosi_);
   ESP_LOGI(TAG, "MISO: %d", miso_);
