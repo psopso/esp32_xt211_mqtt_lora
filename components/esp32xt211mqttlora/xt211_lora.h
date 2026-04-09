@@ -1,4 +1,5 @@
 #pragma once
+
 #include "esphome.h"
 
 namespace esp32xt211mqttlora {
@@ -8,8 +9,8 @@ class MyComponent : public esphome::Component {
   void setup() override;
   void loop() override;
 
- private:
+ protected:
   unsigned long last_log_time = 0;
 };
 
-};
+}  // namespace esp32xt211mqttlora
