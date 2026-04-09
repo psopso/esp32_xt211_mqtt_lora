@@ -1,5 +1,10 @@
 #include "xt211_lora.h"
 
+void set_role(const std::string &role) {
+  if (role == "tx") role_ = ROLE_TX;
+  else role_ = ROLE_RX;
+}
+
 namespace esp32xt211mqttlora {
 
 static const char *TAG = "esp32xt211mqttlora";
@@ -34,6 +39,19 @@ void MyComponent::loop() {
 
   auto now = esphome::millis();
 
+  if (role_ == ROLE_TX) {
+    if (now - last_log_time > 5000) {
+      ESP_LOGI(TAG, "[TX] Posílám paket: HELLO");
+      last_log_time = now;
+    }
+  }
+
+  if (role_ == ROLE_RX) {
+    if (now - last_log_time > 7000) {
+      ESP_LOGI(TAG, "[RX] Přijat paket: HELLO");
+      last_log_time = now;
+    }
+  }
   if (now - last_log_time > 10000) {
     counter = counter + 1;
     ESP_LOGI(TAG, "Loop běží %d  %d", setuprun, counter);

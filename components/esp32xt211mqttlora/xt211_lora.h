@@ -2,6 +2,11 @@
 
 #include "esphome.h"
 
+enum Role {
+  ROLE_TX,
+  ROLE_RX
+};
+
 namespace esp32xt211mqttlora {
 
 class MyComponent : public esphome::Component {
