@@ -1,11 +1,11 @@
 #pragma once
 
 #include "esphome.h"
-#include "esphome/components/spi/spi.h"
+#include <spi.h>
 
 namespace esp32xt211mqttlora {
 
-class MyComponent : public esphome::Component, public esphome::spi::SPIDevice {
+class MyComponent : public esphome::Component {
  public:
   void setup() override;
   void loop() override;
