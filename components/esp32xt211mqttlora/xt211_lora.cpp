@@ -11,23 +11,6 @@ static const uint8_t REG_FRF_MSB = 0x06;
 static const uint8_t REG_FRF_MID = 0x07;
 static const uint8_t REG_FRF_LSB = 0x08;
 
-// SPI read
-uint8_t MyComponent::read_reg(uint8_t reg) {
-  this->enable();
-  this->transfer(reg & 0x7F);
-  uint8_t val = this->transfer(0x00);
-  this->disable();
-  return val;
-}
-
-// SPI write
-void MyComponent::write_reg(uint8_t reg, uint8_t value) {
-  this->enable();
-  this->transfer(reg | 0x80);
-  this->transfer(value);
-  this->disable();
-}
-
 void MyComponent::setup() {
   ESP_LOGCONFIG(TAG, "SX1278 init");
 
