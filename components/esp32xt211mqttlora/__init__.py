@@ -2,8 +2,6 @@ import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.const import CONF_ID
 
-from esphome.components import spi
-
 CONF_NSS = "nss"
 CONF_RST = "rst"
 CONF_DIO0 = "dio0"
@@ -23,8 +21,6 @@ CONFIG_SCHEMA = cv.Schema({
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
-
-    await spi.register_spi_device(var, config)
 
     cg.add(var.set_nss(config[CONF_NSS]))
     cg.add(var.set_rst(config[CONF_RST]))
