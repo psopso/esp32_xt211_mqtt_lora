@@ -56,11 +56,13 @@ void MyComponent::setup() {
   ESP_ERROR_CHECK(spi_bus_add_device(SPI2_HOST, &devcfg, &spi_));
 
   // 🔄 RESET
-  pinMode(rst_, OUTPUT);
-  digitalWrite(rst_, LOW);
-  delay(10);
-  digitalWrite(rst_, HIGH);
-  delay(10);
+  gpio_set_direction((gpio_num_t)rst_, GPIO_MODE_OUTPUT);
+
+  gpio_set_level((gpio_num_t)rst_, 0);
+  vTaskDelay(pdMS_TO_TICKS(10));
+
+  gpio_set_level((gpio_num_t)rst_, 1);
+  vTaskDelay(pdMS_TO_TICKS(10));
 
   // 📡 TEST
   uint8_t version = read_reg(REG_VERSION);
