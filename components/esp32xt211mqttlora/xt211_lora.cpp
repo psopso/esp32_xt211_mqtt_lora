@@ -9,19 +9,19 @@ bool firstrun = true;
 int counter = 0;
 
 void MyComponent::dump_config() {
-      ESP_LOGW(TAG, "*** My component ***");
-      //delay(10);  // NOLINT
-}
-
-void MyComponent::setup() {
-//  esphome::delay(2000);
-  ESP_LOGCONFIG(TAG, "Setup OK");
+  ESP_LOGW(TAG, "*** esp32xt211mqttlora ***");
   ESP_LOGI(TAG, "MOSI: %d", mosi_);
   ESP_LOGI(TAG, "MISO: %d", miso_);
   ESP_LOGI(TAG, "SCK:  %d", sck_);
   ESP_LOGI(TAG, "NSS:  %d", nss_);
   ESP_LOGI(TAG, "RST:  %d", rst_);
   ESP_LOGW(TAG, "DIO0: %d", dio0_);  
+      //delay(10);  // NOLINT
+}
+
+void MyComponent::setup() {
+//  esphome::delay(2000);
+  ESP_LOGCONFIG(TAG, "Setup OK");
   setuprun = true;
 }
 
