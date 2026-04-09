@@ -8,7 +8,7 @@ CONF_DIO0 = "dio0"
 CONF_ROLE = "role"
 
 esp32xt211mqttlora_ns = cg.esphome_ns.namespace('esp32xt211mqttlora')
-MyComponent = esp32xt211mqttlora_ns.class_('MyComponent', cg.Component, spi.SPIDevice)
+MyComponent = esp32xt211mqttlora_ns.class_('MyComponent', cg.Component)
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(MyComponent),
