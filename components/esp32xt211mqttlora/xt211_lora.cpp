@@ -14,7 +14,8 @@ void MyComponent::setup() {
   ESP_LOGI(TAG, "SCK:  %d", sck_);
   ESP_LOGI(TAG, "NSS:  %d", nss_);
   ESP_LOGI(TAG, "RST:  %d", rst_);
-  ESP_LOGI(TAG, "DIO0: %d", dio0_);  setuprun = true;
+  ESP_LOGI(TAG, "DIO0: %d", dio0_);  
+  setuprun = true;
 }
 
 void MyComponent::loop() {
@@ -22,6 +23,13 @@ void MyComponent::loop() {
 
   if (now - last_log_time > 10000) {
     ESP_LOGI(TAG, "Loop běží %d", setuprun);
+    ESP_LOGI(TAG, "MOSI: %d", mosi_);
+    ESP_LOGI(TAG, "MISO: %d", miso_);
+    ESP_LOGI(TAG, "SCK:  %d", sck_);
+    ESP_LOGI(TAG, "NSS:  %d", nss_);
+    ESP_LOGI(TAG, "RST:  %d", rst_);
+    ESP_LOGI(TAG, "DIO0: %d", dio0_);  
+
     last_log_time = now;
   }
 }
