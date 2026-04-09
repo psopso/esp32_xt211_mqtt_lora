@@ -2,11 +2,6 @@
 
 #include "esphome.h"
 
-enum Role {
-  ROLE_TX,
-  ROLE_RX
-};
-
 namespace esp32xt211mqttlora {
 
 class MyComponent : public esphome::Component {
@@ -20,6 +15,15 @@ class MyComponent : public esphome::Component {
   }
 
   // 🔽 settery
+  void set_role(const std::string &role) {
+    if (role == "tx") role_ = ROLE_TX;
+    else role_ = ROLE_RX;
+  }
+  enum Role {
+    ROLE_TX,
+    ROLE_RX
+  };
+
   void set_mosi(int pin) { mosi_ = pin; }
   void set_miso(int pin) { miso_ = pin; }
   void set_sck(int pin)  { sck_ = pin; }

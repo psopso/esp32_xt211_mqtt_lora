@@ -20,11 +20,6 @@ void MyComponent::dump_config() {
       //delay(10);  // NOLINT
 }
 
-void set_role(const std::string &role) {
-  if (role == "tx") role_ = ROLE_TX;
-  else role_ = ROLE_RX;
-}
-
 void MyComponent::setup() {
 //  esphome::delay(2000);
   ESP_LOGCONFIG(TAG, "Setup OK");
