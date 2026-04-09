@@ -9,6 +9,7 @@ bool setuprun = false;
 void MyComponent::setup() {
   esphome::delay(10);
   ESP_LOGI(TAG, "Setup OK");
+  setuprun = true;
 }
 
 void MyComponent::loop() {
