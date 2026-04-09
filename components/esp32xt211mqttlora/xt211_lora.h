@@ -1,7 +1,7 @@
 #pragma once
-namespace esp32xt211mqttlora {
-
 #include "esphome.h"
+
+namespace esp32xt211mqttlora {
 
 class MyComponent : public esphome::Component {
  public:
