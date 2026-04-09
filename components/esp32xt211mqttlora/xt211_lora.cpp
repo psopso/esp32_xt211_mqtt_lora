@@ -8,7 +8,12 @@ bool setuprun = false;
 
 void MyComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setup OK");
-  setuprun = true;
+  ESP_LOGI(TAG, "MOSI: %d", mosi_);
+  ESP_LOGI(TAG, "MISO: %d", miso_);
+  ESP_LOGI(TAG, "SCK:  %d", sck_);
+  ESP_LOGI(TAG, "NSS:  %d", nss_);
+  ESP_LOGI(TAG, "RST:  %d", rst_);
+  ESP_LOGI(TAG, "DIO0: %d", dio0_);  setuprun = true;
 }
 
 void MyComponent::loop() {
