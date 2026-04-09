@@ -6,11 +6,12 @@ namespace esp32xt211mqttlora {
 
 class MyComponent : public esphome::Component {
  public:
+  void dump_config() override;
   void setup() override;
   void loop() override;
 
   float get_setup_priority() const override {
-    return esphome::setup_priority::LATE;
+    return esphome::setup_priority::DATA;
   }
 
   // 🔽 settery
