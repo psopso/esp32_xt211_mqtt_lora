@@ -2,6 +2,7 @@ import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.const import CONF_ID, CONF_CS_PIN
 from esphome.components import spi
+from esphome import pins
 
 # Definice C++ namespace a třídy
 ra02_lora_ns = cg.esphome_ns.namespace('ra02_lora')
