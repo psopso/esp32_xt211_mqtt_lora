@@ -9,6 +9,10 @@ class MyComponent : public esphome::Component {
   void setup() override;
   void loop() override;
 
+  float get_setup_priority() const override {
+    return esphome::setup_priority::LATE;
+  }
+
  protected:
   unsigned long last_log_time = 0;
 };

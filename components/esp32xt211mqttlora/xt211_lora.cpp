@@ -5,6 +5,7 @@ namespace esp32xt211mqttlora {
 static const char *TAG = "esp32xt211mqttlora";
 
 void MyComponent::setup() {
+  delay(10);
   ESP_LOGI(TAG, "Setup OK");
 }
 
