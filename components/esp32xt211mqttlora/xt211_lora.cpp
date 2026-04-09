@@ -1,10 +1,5 @@
 #include "xt211_lora.h"
 
-void set_role(const std::string &role) {
-  if (role == "tx") role_ = ROLE_TX;
-  else role_ = ROLE_RX;
-}
-
 namespace esp32xt211mqttlora {
 
 static const char *TAG = "esp32xt211mqttlora";
@@ -23,6 +18,11 @@ void MyComponent::dump_config() {
   ESP_LOGI(TAG, "  RST:  %d", rst_);
   ESP_LOGW(TAG, "  DIO0: %d", dio0_);  
       //delay(10);  // NOLINT
+}
+
+void set_role(const std::string &role) {
+  if (role == "tx") role_ = ROLE_TX;
+  else role_ = ROLE_RX;
 }
 
 void MyComponent::setup() {
