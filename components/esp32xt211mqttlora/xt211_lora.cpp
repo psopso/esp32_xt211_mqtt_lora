@@ -26,7 +26,7 @@ void MyComponent::setup() {
 }
 
 void MyComponent::loop() {
-  if (!firstrun) {
+  if (firstrun) {
     firstrun = false;
     ESP_LOGI(TAG, "First Loop %d", setuprun);
   }
