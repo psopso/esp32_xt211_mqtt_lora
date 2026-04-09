@@ -1,7 +1,8 @@
 #pragma once
 
 #include "esphome.h"
-#include <SPI.h>
+//#include <SPI.h>
+#include "driver/spi_slave.h"
 
 namespace esp32xt211mqttlora {
 
