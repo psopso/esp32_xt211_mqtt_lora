@@ -7,6 +7,7 @@ static const char *TAG = "esp32xt211mqttlora";
 bool setuprun = false;
 
 void MyComponent::setup() {
+  esphome::delay(1000);
   ESP_LOGCONFIG(TAG, "Setup OK");
   ESP_LOGI(TAG, "MOSI: %d", mosi_);
   ESP_LOGI(TAG, "MISO: %d", miso_);
