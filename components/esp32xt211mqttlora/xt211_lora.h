@@ -34,6 +34,7 @@ class MyComponent : public esphome::Component {
  protected:
   unsigned long last_log_time = 0;
 
+  Role role_;
   // 🔽 uložené piny
   int mosi_;
   int miso_;
