@@ -4,53 +4,70 @@ namespace esp32xt211mqttlora {
 
 static const char *TAG = "esp32xt211mqttlora";
 
-bool setuprun = false;
-bool firstrun = true;
-int counter = 0;
+// registry SX1278
+static const uint8_t REG_VERSION = 0x42;
+static const uint8_t REG_OP_MODE = 0x01;
+static const uint8_t REG_FRF_MSB = 0x06;
+static const uint8_t REG_FRF_MID = 0x07;
+static const uint8_t REG_FRF_LSB = 0x08;
 
-void MyComponent::dump_config() {
-  ESP_LOGW(TAG, "*** esp32xt211mqttlora ***");
-  ESP_LOGI(TAG, "GPIO Setup");
-  ESP_LOGI(TAG, "  MOSI: %d", mosi_);
-  ESP_LOGI(TAG, "  MISO: %d", miso_);
-  ESP_LOGI(TAG, "  SCK:  %d", sck_);
-  ESP_LOGI(TAG, "  NSS:  %d", nss_);
-  ESP_LOGI(TAG, "  RST:  %d", rst_);
-  ESP_LOGW(TAG, "  DIO0: %d", dio0_);  
-      //delay(10);  // NOLINT
+// SPI read
+uint8_t MyComponent::read_reg(uint8_t reg) {
+  this->enable();
+  this->transfer(reg & 0x7F);
+  uint8_t val = this->transfer(0x00);
+  this->disable();
+  return val;
+}
+
+// SPI write
+void MyComponent::write_reg(uint8_t reg, uint8_t value) {
+  this->enable();
+  this->transfer(reg | 0x80);
+  this->transfer(value);
+  this->disable();
 }
 
 void MyComponent::setup() {
-//  esphome::delay(2000);
-  ESP_LOGCONFIG(TAG, "Setup OK");
-  setuprun = true;
+  ESP_LOGCONFIG(TAG, "SX1278 init");
+
+  // reset pin
+  pinMode(rst_, OUTPUT);
+  digitalWrite(rst_, LOW);
+  delay(10);
+  digitalWrite(rst_, HIGH);
+  delay(10);
+
+  // přečtení verze
+  uint8_t version = read_reg(REG_VERSION);
+  ESP_LOGI(TAG, "SX1278 version: 0x%02X", version);
+
+  if (version != 0x12) {
+    ESP_LOGE(TAG, "SX1278 nenalezen!");
+    return;
+  }
+
+  // LoRa mode + sleep
+  write_reg(REG_OP_MODE, 0x80);
+
+  // Standby
+  write_reg(REG_OP_MODE, 0x81);
+
+  // frekvence 433 MHz
+  uint64_t frf = (433000000ULL << 19) / 32000000;
+
+  write_reg(REG_FRF_MSB, (uint8_t)(frf >> 16));
+  write_reg(REG_FRF_MID, (uint8_t)(frf >> 8));
+  write_reg(REG_FRF_LSB, (uint8_t)(frf >> 0));
+
+  ESP_LOGI(TAG, "SX1278 init OK");
 }
 
 void MyComponent::loop() {
-  if (firstrun) {
-    firstrun = false;
-    ESP_LOGI(TAG, "First Loop %d", setuprun);
-  }
-
   auto now = esphome::millis();
 
-  if (role_ == ROLE_TX) {
-    if (now - last_log_time > 5000) {
-      ESP_LOGI(TAG, "[TX] Posílám paket: HELLO");
-      last_log_time = now;
-    }
-  }
-
-  if (role_ == ROLE_RX) {
-    if (now - last_log_time > 7000) {
-      ESP_LOGI(TAG, "[RX] Přijat paket: HELLO");
-      last_log_time = now;
-    }
-  }
   if (now - last_log_time > 10000) {
-    counter = counter + 1;
-    ESP_LOGI(TAG, "Loop běží %d  %d", setuprun, counter);
-
+    ESP_LOGI(TAG, "Loop běží");
     last_log_time = now;
   }
 }
