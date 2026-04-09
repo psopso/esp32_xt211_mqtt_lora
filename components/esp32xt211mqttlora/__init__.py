@@ -19,7 +19,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Required(CONF_RST): cv.int_,
     cv.Required(CONF_DIO0): cv.int_,
     cv.Optional(CONF_ROLE, default="rx"): cv.one_of("tx", "rx"),
-}).extend(spi.spi_device_schema())
+})
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
