@@ -15,6 +15,15 @@ void Ra02Lora::setup() {
     this->reset_pin_->digital_write(true);
 }
 
+void Ra02Lora::loop() {
+  // Musí zde být, i když je prázdná
+}
+
+void Ra02Lora::dump_config() {
+  // ESPHome vyžaduje tuto metodu pro výpis informací do logu při startu
+  ESP_LOGCONFIG("ra02_lora", "Ra02 LoRa Component");
+}
+
 void Ra02Lora::write_reg(uint8_t reg, uint8_t val) {
     this->enable(); // Nastaví CS na LOW
     this->transfer_byte(reg | 0x80);
