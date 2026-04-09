@@ -1,4 +1,4 @@
-#include "my_component.h"
+#include "xt211_lora.h"
 
 static const char *TAG = "my_component";
 
