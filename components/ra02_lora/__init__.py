@@ -11,7 +11,7 @@ Ra02Lora = ra02_lora_ns.class_('Ra02Lora', cg.Component, spi.SPIDevice)
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(Ra02Lora),
-q    cv.Required("reset_pin"): pins.gpio_output_pin_schema,
+    cv.Required("reset_pin"): pins.gpio_output_pin_schema,
     # DIO0 by mělo být vstupní, aby uživatel mohl nastavit např. PullUp
     cv.Required("dio0_pin"): pins.gpio_input_pin_schema, 
 }).extend(cv.COMPONENT_SCHEMA).extend(spi.spi_device_schema(False))
