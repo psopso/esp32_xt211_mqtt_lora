@@ -13,7 +13,8 @@ CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(Ra02Lora),
     cv.Required(CONF_CS_PIN): pins.gpio_output_pin_schema,
     cv.Required("reset_pin"): pins.gpio_output_pin_schema,
-    cv.Required("dio0_pin"): pins.gpio_output_pin_schema,
+    # DIO0 by mělo být vstupní, aby uživatel mohl nastavit např. PullUp
+    cv.Required("dio0_pin"): pins.gpio_input_pin_schema, 
 }).extend(cv.COMPONENT_SCHEMA).extend(spi.spi_device_schema(False))
 
 async def to_code(config):
