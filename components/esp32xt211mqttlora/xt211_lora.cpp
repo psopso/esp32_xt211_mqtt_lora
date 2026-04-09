@@ -44,7 +44,14 @@ void MyComponent::setup() {
   buscfg.quadwp_io_num = -1;
   buscfg.quadhd_io_num = -1;
 
-  ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO));
+  esp_err_t ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+
+  if (ret == ESP_ERR_INVALID_STATE) {
+    ESP_LOGW(TAG, "SPI bus už je inicializovaný");
+  } else if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "SPI init chyba: %d", ret);
+    return;
+  }
 
   // 🔌 DEVICE CONFIG
   spi_device_interface_config_t devcfg = {};
@@ -53,7 +60,12 @@ void MyComponent::setup() {
   devcfg.spics_io_num = nss_;
   devcfg.queue_size = 1;
 
-  ESP_ERROR_CHECK(spi_bus_add_device(SPI2_HOST, &devcfg, &spi_));
+  ret = spi_bus_add_device(SPI2_HOST, &devcfg, &spi_);
+
+  if (ret != ESP_OK) {
+    ESP_LOGE(TAG, "SPI device add chyba: %d", ret);
+    return;
+  }
 
   // 🔄 RESET
   gpio_set_direction((gpio_num_t)rst_, GPIO_MODE_OUTPUT);
