@@ -9,7 +9,7 @@ void MyComponent::setup() {
 void MyComponent::loop() {
   unsigned long now = millis();
 
-  if (now - last_log_time >= 10000) {  // 10 sekund
+  if (now - last_log_time >= 1000) {  // 10 sekund
     ESP_LOGI(TAG, "Loop běží...");
     last_log_time = now;
   }
