@@ -10,9 +10,9 @@ Ra02Lora = ra02_lora_ns.class_('Ra02Lora', cg.Component, spi.SPIDevice)
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(Ra02Lora),
-    cv.Required(CONF_CS_PIN): cv.int_,
-    cv.Required("reset_pin"): cv.int_,
-    cv.Required("dio0_pin"): cv.int_,
+    cv.Required(CONF_CS_PIN): cv.pin_,
+    cv.Required("reset_pin"): cv.pin_,
+    cv.Required("dio0_pin"): cv.pin_,
 }).extend(cv.COMPONENT_SCHEMA).extend(spi.spi_device_schema(False))
 
 async def to_code(config):
