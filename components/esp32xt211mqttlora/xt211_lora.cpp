@@ -47,7 +47,7 @@ void MyComponent::setup() {
   esp_err_t ret = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
 
   if (ret == ESP_ERR_INVALID_STATE) {
-    ESP_LOGW(TAG, "SPI bus už je inicializovaný");
+    ESP_LOGE(TAG, "SPI bus už je inicializovaný");
   } else if (ret != ESP_OK) {
     ESP_LOGE(TAG, "SPI init chyba: %d", ret);
     return;
