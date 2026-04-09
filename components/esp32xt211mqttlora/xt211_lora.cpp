@@ -7,7 +7,7 @@ static const char *TAG = "esp32xt211mqttlora";
 bool setuprun = false;
 
 void MyComponent::dump_config() {
-      ESP_LOGW(TAG, "*** Panasonic Heatpump Component v%s ***", PANASONIC_HEATPUMP_VERSION);
+      ESP_LOGW(TAG, "*** My component ***");
       //delay(10);  // NOLINT
 }
 
