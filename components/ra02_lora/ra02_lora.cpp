@@ -76,7 +76,7 @@ void Ra02Lora::setup() {
 }
 
 void Ra02Lora::loop() {
- ESP_LOGD(TAG, "Stav DIO0 pinu: %d", this->dio0_pin_->digital_read());
+// ESP_LOGD(TAG, "Stav DIO0 pinu: %d", this->dio0_pin_->digital_read());
   if (this->dio0_pin_->digital_read()) {
     uint8_t irq_flags = this->read_reg(0x12);
     
