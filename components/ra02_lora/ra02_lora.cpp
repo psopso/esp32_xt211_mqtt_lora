@@ -32,8 +32,8 @@ void Ra02Lora::loop() {
 void Ra02Lora::dump_config() {
   // ESPHome vyžaduje tuto metodu pro výpis informací do logu při startu
   ESP_LOGCONFIG("ra02_lora", "Ra02 LoRa Component");
-  ESP_LOGCONFIF("ra02_lora", "reset pin", reset_pin_);
-  ESP_LOGCONFIF("ra02_lora", "dio0 pin", dio0_pin_);
+  ESP_LOGCONFIG("ra02_lora", "reset pin", reset_pin_);
+  ESP_LOGCONFIG("ra02_lora", "dio0 pin", dio0_pin_);
 }
 
 void Ra02Lora::write_reg(uint8_t reg, uint8_t val) {
