@@ -60,7 +60,19 @@ void Ra02Lora::setup() {
     this->write_reg(0x0C, 0x23); // LNA gain na max, LNA boost zapnut
 }
 
-void Ra02Lora::loop() {}
+void Ra02Lora::loop() {
+	// ... uvnitř loop, když je dio0 HIGH ...
+	this->write_reg(0x0D, current_addr); // Nastavíme SPI pointer v modulu na začátek paketu
+		  
+	this->enable();
+	this->transfer_byte(0x00); // Adresa registru FIFO je 0x00. Pro čtení u SX12xx netřeba & 0x7F u FIFO.
+		  
+	std::string received_data = "";
+	for (int i = 0; i < length; i++) {
+		received_data += (char)this->transfer_byte(0x00); // Čteme bajt po bajtu
+	}
+	this->disable();
+}
 
 void Ra02Lora::dump_config() {
     ESP_LOGCONFIG(TAG, "Ra02 LoRa Component");
