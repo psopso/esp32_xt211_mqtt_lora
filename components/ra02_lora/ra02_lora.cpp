@@ -1,6 +1,8 @@
 #include "ra02_lora.h"
 #include "esphome/core/log.h"
 
+static const char *const TAG = "ra02_lora";
+
 namespace esphome {
 namespace ra02_lora {
 
