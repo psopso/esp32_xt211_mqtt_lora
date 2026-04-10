@@ -51,10 +51,11 @@ void Ra02Lora::setup() {
     // 1. Nastavení Bandwidth (125 kHz) a Coding Rate (4/5)
     // Registr 0x1D: BW (bity 7-4), CR (bity 3-1), Implicit Header (bit 0)
     this->write_reg(0x1D, 0x72); // 0x70 = 125kHz, 0x02 = CR 4/5
-
+    
+    this->write_reg(0x39, 0x34);  //Původně nic
     // 2. Nastavení Spreading Factor (SF7)
     // Registr 0x1E: SF (bity 7-4), CRC On (bit 2)
-    this->write_reg(0x1E, 0x74); // 0x70 = SF7, 0x04 = Payload CRC zapnuto
+    this->write_reg(0x1E, 0xC4); // 0x70 = SF7, 0x04 = Payload CRC zapnuto původně 0x74
 
     // 3. Nastavení LNA (zesilovač nízkého šumu) pro lepší citlivost
     this->write_reg(0x0C, 0x23); // LNA gain na max, LNA boost zapnut
