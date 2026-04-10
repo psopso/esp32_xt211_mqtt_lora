@@ -43,6 +43,14 @@ void Ra02Lora::write_reg(uint8_t reg, uint8_t val) {
     this->disable(); // Nastaví CS na HIGH
 }
 
+uint8_t Ra02Lora::read_reg(uint8_t reg) {
+    this->enable(); // Nastaví CS na LOW
+    this->transfer_byte(reg & 0x7F); // SPI read u SX1278 má MSB v nule
+    uint8_t val = this->transfer_byte(0x00); // Pošleme "nic" a přečteme odpověď
+    this->disable(); // Nastaví CS na HIGH
+    return val;
+}
+
 // ... zbytek metod (read_reg, send_packet atd.)
 }
 }
