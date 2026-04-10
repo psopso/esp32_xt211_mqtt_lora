@@ -58,20 +58,52 @@ void Ra02Lora::setup() {
 
     // 3. Nastavení LNA (zesilovač nízkého šumu) pro lepší citlivost
     this->write_reg(0x0C, 0x23); // LNA gain na max, LNA boost zapnut
+
+    // 1. Nastavení DIO0 pinu, aby vyvolal přerušení při příjmu (PayloadReady)
+    // Registr 0x40: Mapování DIO pinů. 0x00 znamená DIO0 -> RXDONE
+    this->write_reg(0x40, 0x00);
+
+    // 2. Nastavení adresy v paměti FIFO (kde začíná RX buffer)
+    this->write_reg(0x0D, 0x00); // FIFO base address
+    this->write_reg(0x0F, 0x00); // SPI pointer na začátek
+
+    // 3. Přepnutí do režimu RX Continuous (stálý příjem)
+    this->write_reg(0x01, 0x85); 
+
+    ESP_LOGI(TAG, "SX1278 prepnut do rezimu nepretrziteho prijmu (RX)...");
+
 }
 
 void Ra02Lora::loop() {
-	// ... uvnitř loop, když je dio0 HIGH ...
-	this->write_reg(0x0D, current_addr); // Nastavíme SPI pointer v modulu na začátek paketu
-		  
-	this->enable();
-	this->transfer_byte(0x00); // Adresa registru FIFO je 0x00. Pro čtení u SX12xx netřeba & 0x7F u FIFO.
-		  
-	std::string received_data = "";
-	for (int i = 0; i < length; i++) {
-		received_data += (char)this->transfer_byte(0x00); // Čteme bajt po bajtu
-	}
-	this->disable();
+  if (this->dio0_pin_->digital_read()) {
+    uint8_t irq_flags = this->read_reg(0x12);
+    
+    if (irq_flags & 0x40) { // RX Done
+      uint8_t length = this->read_reg(0x13);
+      uint8_t current_addr = this->read_reg(0x10);
+      this->write_reg(0x0D, current_addr);
+      
+      this->enable();
+      this->transfer_byte(0x00); // Adresa FIFO pro čtení
+      
+      char hex_buffer[5];
+      std::string hex_output = "";
+      
+      for (int i = 0; i < length; i++) {
+          uint8_t b = this->transfer_byte(0x00);
+          sprintf(hex_buffer, "%02X ", b); // Převede bajt na "FF "
+          hex_output += hex_buffer;
+      }
+      this->disable();
+
+      int8_t rssi = this->read_reg(0x1B) - 164;
+      // Výpis v HEX formátu
+      ESP_LOGI(TAG, "Paket HEX: [ %s] (Delka: %d, RSSI: %d dBm)", 
+               hex_output.c_str(), length, rssi);
+
+      this->write_reg(0x12, 0xFF); // Reset IRQ příznaků
+    }
+  }
 }
 
 void Ra02Lora::dump_config() {
