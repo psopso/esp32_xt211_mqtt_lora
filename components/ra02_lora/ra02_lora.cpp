@@ -26,6 +26,28 @@ void Ra02Lora::setup() {
     }
 
     ESP_LOGI(TAG, "SX1278 uspesne inicializovan, verze: 0x%02X", version);
+
+    // 1. Přepnutí do SLEEP módu (nutné pro změnu na LoRa)
+    this->write_reg(0x01, 0x00); // RegOpMode -> Sleep
+    delay(10);
+
+    // 2. Zapnutí LoRa módu
+    this->write_reg(0x01, 0x80); // RegOpMode -> bit LoRa zapnut
+    delay(10);
+
+    // 3. Nastavení frekvence (příklad pro 433 MHz)
+    // Výpočet: f_step = 61.035 Hz. 433MHz / f_step = 7094272 -> 0x6C4000
+    this->write_reg(0x06, 0x6C); // RegFrfMsb
+    this->write_reg(0x07, 0x40); // RegFrfMid
+    this->write_reg(0x08, 0x00); // RegFrfLsb
+
+    // 4. Přepnutí do STANDBY, abychom viděli, že drží
+    this->write_reg(0x01, 0x81); // RegOpMode -> LoRa Standby
+    delay(10);
+
+    uint8_t mode = this->read_reg(0x01);
+    ESP_LOGI(TAG, "Rezim nastaven na: 0x%02X (mělo by být 0x81)", mode);
+
 }
 
 void Ra02Lora::loop() {}
