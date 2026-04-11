@@ -78,7 +78,8 @@ void Ra02Lora::loop() {
                 ESP_LOGW(TAG, "Kanal obsazen, odklad...");
                 this->interval_ = 500 + (random_uint32() % 500); 
             } else { // Cisto
-                this->send_packet({0x55, 0xAA, 0x01});
+                ESP_LOGW(TAG, "Odesílám paket.");
+                //this->send_packet({0x55, 0xAA, 0x01});
                 this->interval_ = 10000 + (random_uint32() % 2000);
             }
             this->waiting_for_cad_ = false;
