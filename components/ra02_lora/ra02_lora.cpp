@@ -46,7 +46,7 @@ void Ra02Lora::start_cad() {
 
     // --- VERIFIKACE REŽIMU ---
     uint8_t current_mode = this->read_reg(0x01);
-    if (false) //(current_mode != 0x81) {
+    if (false) { //(current_mode != 0x81) {
         ESP_LOGE(TAG, "CHYBA: Rezim Standby nedrzi! Precteno: 0x%02X (ocekavano 0x81)", current_mode);
         // Neukončujeme, zkusíme pokračovat, ale víme, že je něco špatně
     } else {
