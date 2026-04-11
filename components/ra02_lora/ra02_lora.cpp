@@ -10,120 +10,120 @@ void Ra02Lora::setup() {
     this->spi_setup();
     this->reset_pin_->setup();
     this->dio0_pin_->setup();
-    
-    // Hardwarový reset
+    this->dio1_pin_->setup();
+
+    // Reset sekvence
     this->reset_pin_->digital_write(false);
     delay(10);
     this->reset_pin_->digital_write(true);
-    delay(10); // Krátká pauza po resetu je jistota
+    delay(10);
 
-    // Kontrola komunikace
-    uint8_t version = this->read_reg(0x42);
-    if (version != 0x12) {
-        ESP_LOGE(TAG, "SX1278 nenalezen! Registr 0x42 vratil: 0x%02X", version);
+    if (this->read_reg(0x42) != 0x12) {
+        ESP_LOGE(TAG, "SX1278 nenalezen! Registr 0x42 vratil: 0x%02X", this->read_reg(0x42));
         this->mark_failed();
         return;
     }
 
-    ESP_LOGI(TAG, "SX1278 uspesne inicializovan, verze: 0x%02X", version);
+    this->write_reg(0x01, 0x80); // LoRa Mode
+    this->write_reg(0x06, 0x6C); // 433 MHz
+    this->write_reg(0x07, 0x40); 
+    this->write_reg(0x08, 0x00);
 
-    // 1. Přepnutí do SLEEP módu (nutné pro změnu na LoRa)
-    this->write_reg(0x01, 0x00); // RegOpMode -> Sleep
-    delay(10);
+    this->write_reg(0x1D, 0x72); // BW 125, CR 4/5
+    this->write_reg(0x1E, 0xC4); // SF12, CRC On
+    this->write_reg(0x39, 0x12); // Sync Word
+    this->write_reg(0x0C, 0x23); // LNA Max Gain
 
-    // 2. Zapnutí LoRa módu
-    this->write_reg(0x01, 0x80); // RegOpMode -> bit LoRa zapnut
-    delay(10);
+    this->write_reg(0x01, 0x85); // Start v RX Continuous
+    ESP_LOGI(TAG, "LoRa modem inicializován s podporou CAD.");
+}
 
-    // 3. Nastavení frekvence (příklad pro 433 MHz)
-    // Výpočet: f_step = 61.035 Hz. 433MHz / f_step = 7094272 -> 0x6C4000
-    this->write_reg(0x06, 0x6C); // RegFrfMsb
-    this->write_reg(0x07, 0x40); // RegFrfMid
-    this->write_reg(0x08, 0x00); // RegFrfLsb
+void Ra02Lora::start_cad() {
+    this->waiting_for_cad_ = true;
+    this->write_reg(0x01, 0x81); // Standby
+    this->write_reg(0x40, 0x80); // DIO0 = CAD Done
+    this->write_reg(0x01, 0x87); // Režim CAD
+}
 
-    // 4. Přepnutí do STANDBY, abychom viděli, že drží
-    this->write_reg(0x01, 0x81); // RegOpMode -> LoRa Standby
-    delay(10);
-
-    uint8_t mode = this->read_reg(0x01);
-    ESP_LOGI(TAG, "Rezim nastaven na: 0x%02X (mělo by být 0x81)", mode);
-
-    // 1. Nastavení Bandwidth (125 kHz) a Coding Rate (4/5)
-    // Registr 0x1D: BW (bity 7-4), CR (bity 3-1), Implicit Header (bit 0)
-    this->write_reg(0x1D, 0x72); // 0x70 = 125kHz, 0x02 = CR 4/5
+void Ra02Lora::send_packet(std::vector<uint8_t> data) {
+    this->write_reg(0x01, 0x81); // Standby
+    this->write_reg(0x0D, 0x80); // TX Base
+    this->write_reg(0x0F, 0x80); // Pointer
     
-    this->write_reg(0x39, 0x34);  //Původně nic
-    // 2. Nastavení Spreading Factor (SF7)
-    // Registr 0x1E: SF (bity 7-4), CRC On (bit 2)
-    this->write_reg(0x1E, 0xC4); // 0x70 = SF7, 0x04 = Payload CRC zapnuto původně 0x74
-
-    // 3. Nastavení LNA (zesilovač nízkého šumu) pro lepší citlivost
-    this->write_reg(0x0C, 0x23); // LNA gain na max, LNA boost zapnut
-
-    // 1. Nastavení DIO0 pinu, aby vyvolal přerušení při příjmu (PayloadReady)
-    // Registr 0x40: Mapování DIO pinů. 0x00 znamená DIO0 -> RXDONE
-    this->write_reg(0x40, 0x00);
-
-    // 2. Nastavení adresy v paměti FIFO (kde začíná RX buffer)
-    this->write_reg(0x0D, 0x00); // FIFO base address
-    this->write_reg(0x0F, 0x00); // SPI pointer na začátek
-
-    // 3. Přepnutí do režimu RX Continuous (stálý příjem)
-    this->write_reg(0x01, 0x85); 
-
-    ESP_LOGI(TAG, "SX1278 prepnut do rezimu nepretrziteho prijmu (RX)...");
-
+    this->enable();
+    this->transfer_byte(0x00 | 0x80); // Write FIFO
+    for (uint8_t b : data) this->transfer_byte(b);
+    this->disable();
+    
+    this->write_reg(0x22, data.size());
+    this->write_reg(0x40, 0x40); // DIO0 = TX Done
+    this->write_reg(0x01, 0x83); // TX Mode
 }
 
 void Ra02Lora::loop() {
-// ESP_LOGD(TAG, "Stav DIO0 pinu: %d", this->dio0_pin_->digital_read());
-  if (this->dio0_pin_->digital_read()) {
-    uint8_t irq_flags = this->read_reg(0x12);
-    
-    if (irq_flags & 0x40) { // RX Done
-      uint8_t length = this->read_reg(0x13);
-      uint8_t current_addr = this->read_reg(0x10);
-      this->write_reg(0x0D, current_addr);
-      
-      this->enable();
-      this->transfer_byte(0x00); // Adresa FIFO pro čtení
-      
-      char hex_buffer[5];
-      std::string hex_output = "";
-      
-      for (int i = 0; i < length; i++) {
-          uint8_t b = this->transfer_byte(0x00);
-          sprintf(hex_buffer, "%02X ", b); // Převede bajt na "FF "
-          hex_output += hex_buffer;
-      }
-      this->disable();
+    uint32_t now = millis();
 
-      int8_t rssi = this->read_reg(0x1B) - 164;
-      // Výpis v HEX formátu
-      ESP_LOGI(TAG, "Paket HEX: [ %s] (Delka: %d, RSSI: %d dBm)", 
-               hex_output.c_str(), length, rssi);
-
-      this->write_reg(0x12, 0xFF); // Reset IRQ příznaků
+    // 1. Logika odesílání "majáku"
+    if (!this->waiting_for_cad_ && (now - this->last_transmission_ > this->interval_)) {
+        this->start_cad();
     }
-  }
+
+    // 2. Obsluha DIO0 (IRQ)
+    if (this->dio0_pin_->digital_read()) {
+        uint8_t irq = this->read_reg(0x12);
+        uint8_t mode = this->read_reg(0x01) & 0x07;
+
+        if (mode == 0x07) { // CAD Done
+            if (irq & 0x01) { // CAD Detected
+                ESP_LOGW(TAG, "Kanal obsazen, odklad...");
+                this->interval_ = 500 + random(0, 500); 
+            } else { // Cisto
+                this->send_packet({0x55, 0xAA, 0x01});
+                this->interval_ = 10000 + random(0, 2000);
+            }
+            this->waiting_for_cad_ = false;
+            this->last_transmission_ = now;
+            this->write_reg(0x12, 0xFF);
+            this->write_reg(0x01, 0x85); // Zpět do RX
+            this->write_reg(0x40, 0x00); // DIO0 zpět na RXDone
+        } 
+        else if (irq & 0x40) { // RX Done
+            uint8_t len = this->read_reg(0x13);
+            this->write_reg(0x0D, this->read_reg(0x10));
+            this->enable();
+            this->transfer_byte(0x00);
+            std::string out = "";
+            for(int i=0; i<len; i++) {
+                char b[5]; sprintf(b, "%02X ", this->transfer_byte(0x00));
+                out += b;
+            }
+            this->disable();
+            ESP_LOGI(TAG, "Prijato HEX: [%s]", out.c_str());
+            this->write_reg(0x12, 0xFF);
+        }
+        else if (irq & 0x08) { // TX Done
+            this->write_reg(0x12, 0xFF);
+            this->write_reg(0x01, 0x85); // Zpět do RX
+            this->write_reg(0x40, 0x00); // DIO0 zpět na RXDone
+            ESP_LOGD(TAG, "Vysilani OK.");
+        }
+    }
 }
 
 void Ra02Lora::dump_config() {
-    ESP_LOGCONFIG(TAG, "Ra02 LoRa Component");
-    LOG_PIN("  Reset Pin: ", this->reset_pin_);
-    LOG_PIN("  DIO0 Pin: ", this->dio0_pin_);
+    ESP_LOGCONFIG(TAG, "Ra02 LoRa Component (Formal)");
 }
 
 void Ra02Lora::write_reg(uint8_t reg, uint8_t val) {
     this->enable();
-    this->transfer_byte(reg | 0x80); // MSB = 1 pro zápis
+    this->transfer_byte(reg | 0x80);
     this->transfer_byte(val);
     this->disable();
 }
 
 uint8_t Ra02Lora::read_reg(uint8_t reg) {
     this->enable();
-    this->transfer_byte(reg & 0x7F); // MSB = 0 pro čtení
+    this->transfer_byte(reg & 0x7F);
     uint8_t val = this->transfer_byte(0x00);
     this->disable();
     return val;

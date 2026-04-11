@@ -14,6 +14,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Required("reset_pin"): pins.gpio_output_pin_schema,
     # DIO0 by mělo být vstupní, aby uživatel mohl nastavit např. PullUp
     cv.Required("dio0_pin"): pins.gpio_input_pin_schema, 
+    cv.Required(CONF_DIO1_PIN): pins.gpio_input_pin_schema,
 }).extend(cv.COMPONENT_SCHEMA).extend(spi.spi_device_schema(False))
 
 async def to_code(config):
@@ -28,3 +29,7 @@ async def to_code(config):
     if "dio0_pin" in config:
         dio0_pin = await cg.gpio_pin_expression(config["dio0_pin"])
         cg.add(var.set_dio0_pin(dio0_pin))
+
+    if "dio1_pin" in config:
+        dio1_pin = await cg.gpio_pin_expression(config["dio1_pin"])
+        cg.add(var.set_dio1_pin(dio1_pin))
