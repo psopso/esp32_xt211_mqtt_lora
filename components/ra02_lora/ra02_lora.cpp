@@ -76,10 +76,10 @@ void Ra02Lora::loop() {
         if (mode == 0x07) { // CAD Done
             if (irq & 0x01) { // CAD Detected
                 ESP_LOGW(TAG, "Kanal obsazen, odklad...");
-                this->interval_ = 500 + (random_uint() % 500); 
+                this->interval_ = 500 + (random_uint32() % 500); 
             } else { // Cisto
                 this->send_packet({0x55, 0xAA, 0x01});
-                this->interval_ = 10000 + (random_uint() % 2000);
+                this->interval_ = 10000 + (random_uint32() % 2000);
             }
             this->waiting_for_cad_ = false;
             this->last_transmission_ = now;
