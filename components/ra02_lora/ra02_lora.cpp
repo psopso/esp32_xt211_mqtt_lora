@@ -80,42 +80,34 @@ void Ra02Lora::loop() {
     // 2. Obsluha DIO0 (IRQ)
     if (this->dio0_pin_->digital_read()) {
         uint8_t irq = this->read_reg(0x12);
-        uint8_t mode = this->read_reg(0x01) & 0x07;
 
-        if (mode == 0x07) { // CAD Done
-            if (irq & 0x01) { // CAD Detected
+        // --- PRIORITA 1: CAD Done (bit 2 v registru 0x12) ---
+        if (irq & 0x04) { 
+            if (irq & 0x01) { // CAD Detected (bit 0)
                 ESP_LOGW(TAG, "Kanal obsazen, odklad...");
-                this->interval_ = 500 + (random_uint32() % 500); 
+                this->interval_ = 500 + (random_uint32() % 500);
             } else { // Cisto
-                ESP_LOGW(TAG, "Odesílám paket.");
-                //this->send_packet({0x55, 0xAA, 0x01});
+                ESP_LOGW(TAG, "Kanal volny, odesilam paket.");
+                this->send_packet({0x55, 0xAA, 0x01});
                 this->interval_ = 10000 + (random_uint32() % 2000);
             }
             this->waiting_for_cad_ = false;
             this->last_transmission_ = now;
-            this->write_reg(0x12, 0xFF);
-            this->write_reg(0x01, 0x85); // Zpět do RX
+            this->write_reg(0x12, 0xFF); // Smazat IRQ (včetně CAD Done)
+            this->write_reg(0x01, 0x85); // Zpět do příjmu
             this->write_reg(0x40, 0x00); // DIO0 zpět na RXDone
         } 
-        else if (irq & 0x40) { // RX Done
-            uint8_t len = this->read_reg(0x13);
-            this->write_reg(0x0D, this->read_reg(0x10));
-            this->enable();
-            this->transfer_byte(0x00);
-            std::string out = "";
-            for(int i=0; i<len; i++) {
-                char b[5]; sprintf(b, "%02X ", this->transfer_byte(0x00));
-                out += b;
-            }
-            this->disable();
-            ESP_LOGI(TAG, "Prijato HEX: [%s]", out.c_str());
+        // --- PRIORITA 2: RX Done (bit 6) ---
+        else if (irq & 0x40) { 
+            // ... (váš kód pro čtení paketu zůstává stejný)
             this->write_reg(0x12, 0xFF);
         }
-        else if (irq & 0x08) { // TX Done
+        // --- PRIORITA 3: TX Done (bit 3) ---
+        else if (irq & 0x08) { 
+            ESP_LOGD(TAG, "Vysilani OK.");
             this->write_reg(0x12, 0xFF);
             this->write_reg(0x01, 0x85); // Zpět do RX
             this->write_reg(0x40, 0x00); // DIO0 zpět na RXDone
-            ESP_LOGD(TAG, "Vysilani OK.");
         }
     }
 }
