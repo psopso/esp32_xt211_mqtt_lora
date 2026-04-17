@@ -76,6 +76,7 @@ void Ra02Lora::loop() {
 
     // B. OBSLUHA PŘERUŠENÍ (DIO0)
     if (this->dio0_pin_->digital_read()) {
+        ESP_LOGI(TAG, "DIO pin interrupt");
         uint8_t irq = this->read_reg(0x12);
         this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek
 
