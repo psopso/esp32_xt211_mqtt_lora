@@ -21,7 +21,7 @@ void Ra02Lora::setup() {
     static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg) {
       // Minimální logika (např. nastavení flagu nebo zápis do fronty)
       arg->interrupt_triggered_ = true;
-    }
+    };
 
     // Rychlý reset
     this->reset_pin_->digital_write(false);
