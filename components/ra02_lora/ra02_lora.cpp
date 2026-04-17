@@ -79,7 +79,7 @@ void Ra02Lora::loop() {
         
 //        uint8_t irq = this->read_reg(0x12);
 //        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!! IRQ Flag: 0x%02X", irq);
-        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!!");
+//        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!!");
         // Zde můžete pokračovat vyčítáním FIFO jako minule...
         this->write_reg(0x12, 0xFF); // Vyčistit vlajky v čipu    }
     }
