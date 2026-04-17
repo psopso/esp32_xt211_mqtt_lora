@@ -1,5 +1,6 @@
 #include "ra02_lora.h"
 #include "esphome/core/log.h"
+#include "driver/gpio.h"
 
 namespace esphome {
 namespace ra02_lora {
