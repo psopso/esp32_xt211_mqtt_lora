@@ -39,6 +39,7 @@ static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
 
+  // Definice fronty pro předávání čísel pinů (nebo událostí)
   QueueHandle_t lora_queue_;
   volatile bool interrupt_triggered_{false}; 
 
