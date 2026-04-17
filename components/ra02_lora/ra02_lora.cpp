@@ -87,6 +87,11 @@ void Ra02Lora::start_cad() {
 void Ra02Lora::loop() {
     uint32_t now = millis();
     
+    if (this->interrupt_triggered_) {
+      this->interrupt_triggered_ = false;
+      ESP_LOGD(TAG, "DIO0 interrupt");
+    }
+
     // Přečteme si stavové vlajky rovnou z čipu
     uint8_t irq = this->read_reg(0x12);
 
