@@ -148,6 +148,9 @@ void Ra02Lora::loop() {
         delay(10);
         irq = this->read_reg(0x12);
         ESP_LOGI("lora", "IRQ flags after clear: 0x%02X", irq);
+        state = this->dio0_pin_->digital_read();
+        ESP_LOGI("gpio", "DIO0 stav po clear: %d", state);
+
 
 
         ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
