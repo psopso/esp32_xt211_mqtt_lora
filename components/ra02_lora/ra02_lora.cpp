@@ -10,12 +10,18 @@ void Ra02Lora::setup() {
     this->spi_setup();
     this->reset_pin_->setup();
     this->dio0_pin_->setup();
-    this->dio0_pin_->attach_interrupt(
-      []() {
-        // ISR handler
-      },
-      gpio::INTERRUPT_RISING_EDGE
-    );
+    // 2. Registrace ISR handleru přes ESPHome abstrakci
+      this->dio0_pin_->attach_interrupt(
+        &MySpiDevice::gpio_intr_handler, // Statická nebo staticky dostupná funkce
+        this,                            // Argument předaný do handleru
+        gpio::INTERRUPT_RISING_EDGE      // Typ hrany
+      );
+
+    // Musí být označen jako IRAM_ATTR pro běh z RAM
+    static void IRAM_ATTR gpio_intr_handler(MySpiDevice *arg) {
+      // Minimální logika (např. nastavení flagu nebo zápis do fronty)
+      arg->interrupt_triggered_ = true;
+    }
 
     // Rychlý reset
     this->reset_pin_->digital_write(false);
