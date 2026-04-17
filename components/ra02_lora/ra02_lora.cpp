@@ -10,12 +10,13 @@ void Ra02Lora::setup() {
     this->spi_setup();
     this->reset_pin_->setup();
     this->dio0_pin_->setup();
+
     // 2. Registrace ISR handleru přes ESPHome abstrakci
-      this->dio0_pin_->attach_interrupt(
-        &Ra02Lora::gpio_intr_handler, // Statická nebo staticky dostupná funkce
-        this,                            // Argument předaný do handleru
-        gpio::INTERRUPT_RISING_EDGE      // Typ hrany
-      );
+    this->dio0_pin_->attach_interrupt(
+      &Ra02Lora::gpio_intr_handler, // Statická nebo staticky dostupná funkce
+      this,                            // Argument předaný do handleru
+      gpio::INTERRUPT_RISING_EDGE      // Typ hrany
+    );
 
     // Rychlý reset
     this->reset_pin_->digital_write(false);
@@ -58,7 +59,6 @@ void Ra02Lora::setup() {
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
   arg->interrupt_triggered_ = true;
-  ESP_LOGI(TAG, "DIO pin interrupt");
 };
 
 void Ra02Lora::start_cad() {
@@ -79,6 +79,12 @@ void Ra02Lora::start_cad() {
 
 void Ra02Lora::loop() {
     uint32_t now = millis();
+
+    if (this->interrupt_triggered_) {
+      this->interrupt_triggered_ = false; // Reset příznaku
+      ESP_LOGI("ra02", "DIO0 pin interrupt zachycen v loopu!");
+    
+    }
 
     // A. LOGIKA VYSÍLÁNÍ (Maják každých 10s)
     // --- U PŘIJÍMAČE TENTO BLOK SMAŽTE NEBO ZAKOMENTUJTE ---
