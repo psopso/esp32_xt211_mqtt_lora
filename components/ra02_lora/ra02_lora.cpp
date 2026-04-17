@@ -55,7 +55,7 @@ void Ra02Lora::setup() {
 }
 
 // Musí být označen jako IRAM_ATTR pro běh z RAM
-void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg) {
+void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
   arg->interrupt_triggered_ = true;
 };
