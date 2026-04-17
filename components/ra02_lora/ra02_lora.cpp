@@ -67,8 +67,8 @@ QueueHandle_t gpio_evt_queue;
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
   arg->interrupt_triggered_ = true;
-  uint32_t gpio_num = (uint32_t) arg;
-  xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
+//  uint32_t gpio_num = (uint32_t) arg;
+//  xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
 };
 
 void Ra02Lora::start_cad() {
@@ -90,14 +90,15 @@ void Ra02Lora::start_cad() {
 void Ra02Lora::loop() {
     uint32_t now = millis();
     
-    uint32_t io_num;
-    if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
-        uint8_t irq = read_reg(REG_IRQ_FLAGS);
-    }
+//    uint32_t io_num;
+//    if (xQueueReceive(gpio_evt_queue, &io_num, portMAX_DELAY)) {
+//        uint8_t irq = read_reg(REG_IRQ_FLAGS);
+//    }
 
     if (this->interrupt_triggered_) {
       this->interrupt_triggered_ = false;
       ESP_LOGD(TAG, "DIO0 interrupt");
+      this->write_reg(0x12, 0xFF); // Vyčistit vlajky
     }
 
     // Přečteme si stavové vlajky rovnou z čipu
