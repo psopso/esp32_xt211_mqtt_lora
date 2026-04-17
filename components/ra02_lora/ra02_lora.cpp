@@ -70,16 +70,71 @@ void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
 };
 
 void Ra02Lora::loop() {
-    uint32_t now = millis();
+    uint32_t io_num;
     
-    if (this->interrupt_triggered_) {
-	this->interrupt_triggered_ = false;
+    // 1. Kontrola fronty - čekáme 0 ms (neblokujeme loop)
+    // Pokud v handleru posíláte xQueueSendFromISR(gpio_evt_queue, &pin, NULL)
+    if (xQueueReceive(gpio_evt_queue, &io_num, 0)) {
         
+        // 2. Přečteme IRQ příznaky, abychom věděli, co se stalo
         uint8_t irq = this->read_reg(0x12);
-        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!! IRQ Flag: 0x%02X", irq);
-//        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!!");
-        // Zde můžete pokračovat vyčítáním FIFO jako minule...
-        this->write_reg(0x12, 0xFF); // Vyčistit vlajky v čipu    }
+        
+        // Diagnostika do logu
+        ESP_LOGD(TAG, "Probuzeno frontou (Pin %d), IRQ registr: 0x%02X", io_num, irq);
+
+        // 3. Zpracování PŘÍJMU (RX Done)
+        if (irq & 0x40) {
+            // Přečteme délku přijatého paketu
+            uint8_t len = this->read_reg(0x13);
+            
+            // Nastavíme FIFO ukazatel na začátek přijatého paketu
+            uint8_t current_addr = this->read_reg(0x10); 
+            this->write_reg(0x0D, current_addr);
+
+            // Samotné čtení dat přes SPI
+            this->enable();
+            this->transfer_byte(0x00); // Adresa FIFO pro čtení (RegFifo = 0x00)
+            
+            std::vector<uint8_t> buffer;
+            for (int i = 0; i < len; i++) {
+                buffer.push_back(this->transfer_byte(0x00));
+            }
+            this->disable();
+
+            // Přečtení RSSI (síla signálu)
+            // Pro 433MHz je offset -164
+            int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
+
+            // Formátování výstupu pro log (HEX podoba)
+            std::string hex_str = "";
+            for (uint8_t b : buffer) {
+                char hex[5];
+                sprintf(hex, "%02X ", b);
+                hex_str += hex;
+            }
+
+            ESP_LOGI(TAG, ">>> BALÍČEK PŘIJAT [%dB]: %s (RSSI: %d dBm)", len, hex_str.c_str(), rssi);
+            
+            // Tady můžete data předat dál, např. do senzoru v ESPHome:
+            // this->some_sensor->publish_state(buffer[0]); 
+        }
+
+        // 4. Zpracování KONCE VYSÍLÁNÍ (TX Done)
+        if (irq & 0x08) {
+            ESP_LOGD(TAG, "Vysílání dokončeno, přepínám zpět do příjmu.");
+            this->write_reg(0x01, 0x85); // RX Continuous mode
+        }
+
+        // 5. VYČIŠTĚNÍ - Kritický krok!
+        // Zapíšeme 0xFF (nebo konkrétní bity), abychom smazali příznaky v modulu
+        this->write_reg(0x12, 0xFF); 
+    }
+
+    // --- Zbytek vaší loop logiky (např. odesílání majáku) ---
+    uint32_t now = millis();
+    if (now - this->last_transmission_ > 10000) {
+        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
+        this->last_transmission_ = now;
     }
 }
 
