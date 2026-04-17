@@ -8,9 +8,6 @@ namespace ra02_lora {
 static const char *const TAG = "ra02_lora";
 
 void Ra02Lora::setup() {
-    // 1. Vytvoření fronty (kapacita 10 prvků typu uint32_t)
-    this->lora_queue_ = xQueueCreate(10, sizeof(uint32_t));
-
     this->spi_setup();
     this->reset_pin_->setup();
     
@@ -64,52 +61,41 @@ void Ra02Lora::setup() {
 }
 
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(void *arg) {
-    // Přetypujeme argument zpět na naši třídu
-    Ra02Lora *self = static_cast<Ra02Lora*>(arg);
-    
-    // Získáme číslo pinu (volitelné, můžeme poslat i fixní hodnotu)
-    uint32_t pin_no = 27; 
-
-    // Odeslání do fronty z ISR (FromISR verze!)
-    // Třetí parametr (pxHigherPriorityTaskWoken) můžeme nechat NULL, 
-    // ESPHome si s přeplánováním poradí v loopu.
-    xQueueSendFromISR(self->lora_queue_, &pin_no, NULL);
+    this->interrupt_triggered_ = true;
 }
 
 void Ra02Lora::loop() {
-    uint32_t pin_received;
+    if (this->interrupt_triggered_) {
+        this->interrupt_triggered_ = false; // Reset flagu
 
-    // Pokud je ve frontě zpráva (čekáme 0 ms, abychom neblokovali ostatní komponenty)
-    if (xQueueReceive(this->lora_queue_, &pin_received, 0) == pdTRUE) {
-        
-        // TEPRVE TADY začíná SPI komunikace
         uint8_t irq = this->read_reg(0x12);
-        
+        this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek v čipu
+
         if (irq & 0x40) { // RX Done
-            ESP_LOGI(TAG, "Přerušení z pinu %u zpracováno. Čtu data...", pin_received);
-            
             uint8_t len = this->read_reg(0x13);
-            this->write_reg(0x0D, this->read_reg(0x10));
-            
+            uint8_t addr = this->read_reg(0x10); // Adresa začátku paketu
+            this->write_reg(0x0D, addr);
+
             this->enable();
-            this->transfer_byte(0x00); 
-            std::string data_out = "";
+            this->transfer_byte(0x00); // FIFO read adresa
+            
+            std::string out = "";
             for(int i = 0; i < len; i++) {
-                char b[5]; 
+                char b[5];
                 sprintf(b, "%02X ", this->transfer_byte(0x00));
-                data_out += b;
+                out += b;
             }
             this->disable();
-            
+
             int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
-            ESP_LOGI(TAG, "Prijato: [%s] RSSI: %d", data_out.c_str(), rssi);
+            ESP_LOGI("lora", ">>> PRIJATO: [%s] (%d dBm)", out.c_str(), rssi);
         }
         
-        // Vyčistit příznaky v modulu
-        this->write_reg(0x12, 0xFF);
+        if (irq & 0x08) { // TX Done
+            ESP_LOGD("lora", "Vysilani OK, navrat do RX.");
+            this->write_reg(0x01, 0x85); 
+        }
     }
-    
-    // Periodické vysílání majáku zůstává beze změny...
 }
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
