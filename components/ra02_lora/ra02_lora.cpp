@@ -9,33 +9,44 @@ static const char *const TAG = "ra02_lora";
 void Ra02Lora::setup() {
     this->spi_setup();
     this->reset_pin_->setup();
-    this->dio0_pin_->setup();
-    this->dio1_pin_->setup();
+    
+    // Hardwarový reset pinu nepotřebujeme, necháme jen DIO nezapojené
+    // this->dio0_pin_->setup(); // VYMAZÁNO
 
-    // Reset sekvence
+    // Hardwarový reset SX1278
     this->reset_pin_->digital_write(false);
     delay(10);
     this->reset_pin_->digital_write(true);
     delay(10);
 
     if (this->read_reg(0x42) != 0x12) {
-        ESP_LOGE(TAG, "SX1278 nenalezen! Registr 0x42 vratil: 0x%02X", this->read_reg(0x42));
+        ESP_LOGE(TAG, "SX1278 nenalezen!");
         this->mark_failed();
         return;
     }
 
-    this->write_reg(0x01, 0x80); // LoRa Mode
-    this->write_reg(0x06, 0x6C); // 433 MHz
-    this->write_reg(0x07, 0x40); 
+    // 1. ZÁKLADNÍ NASTAVENÍ
+    this->write_reg(0x01, 0x80); // Sleep
+    delay(10);
+    this->write_reg(0x01, 0x81); // Standby
+
+    // 2. FREKVENCE 434.0 MHz
+    this->write_reg(0x06, 0x6C); 
+    this->write_reg(0x07, 0x80); 
     this->write_reg(0x08, 0x00);
 
-    this->write_reg(0x1D, 0x72); // BW 125, CR 4/5
-    this->write_reg(0x1E, 0x74); // SF7, CRC On
-    this->write_reg(0x39, 0x12); // Sync Word
-    this->write_reg(0x0C, 0x23); // LNA Max Gain
+    // 3. VÝKON VYSÍLAČE (Tohle nám celou dobu chybělo!)
+    // 0x8F = Zapne PA_BOOST pin (na kterém je anténa) na maximální výkon
+    this->write_reg(0x09, 0x8F); 
 
-    this->write_reg(0x01, 0x85); // Start v RX Continuous
-    ESP_LOGI(TAG, "LoRa modem inicializován s podporou CAD.");
+    // 4. MODEM (SF7 = rychlé, BW 125, CRC On)
+    this->write_reg(0x1D, 0x72); 
+    this->write_reg(0x1E, 0x74); 
+    this->write_reg(0x39, 0x12); // Sync Word
+
+    // 5. START DO PŘÍJMU
+    this->write_reg(0x01, 0x85); // RX Continuous
+    ESP_LOGI(TAG, ">>> LORA BARE-METAL START <<<");
 }
 
 void Ra02Lora::start_cad() {
@@ -71,73 +82,60 @@ void Ra02Lora::send_packet(std::vector<uint8_t> data) {
 
 void Ra02Lora::loop() {
     uint32_t now = millis();
+    
+    // Přečteme si stavové vlajky rovnou z čipu
+    uint8_t irq = this->read_reg(0x12);
 
-    // 1. Logika odesílání "majáku"
-    if (!this->waiting_for_cad_ && (now - this->last_transmission_ > this->interval_)) {
-//        this->start_cad();
+    // --- A. SEKCE PŘÍJMU (Vyhodnocujeme vždy) ---
+    if (irq & 0x40) { // RX Done
+        uint8_t len = this->read_reg(0x13);
+        this->write_reg(0x0D, this->read_reg(0x10)); // Nastavit ukazatel na začátek dat
+        
+        this->enable();
+        this->transfer_byte(0x00); // Čtení FIFO
+        std::string out = "";
+        for(int i = 0; i < len; i++) {
+            char b[5]; sprintf(b, "%02X ", this->transfer_byte(0x00));
+            out += b;
+        }
+        this->disable();
+        
+        int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
+        ESP_LOGI(TAG, "===== PRIJATO: [%s] (RSSI: %d dBm) =====", out.c_str(), rssi);
+        
+        this->write_reg(0x12, 0xFF); // Vyčistit vlajky
+    }
+    else if (irq & 0x20) { // CRC Error (Něco jsme zaslechli, ale je to rozbité)
+        ESP_LOGW(TAG, "Prijato rozbite (CRC Error)!");
+        this->write_reg(0x12, 0xFF); // Vyčistit
+    }
+    else if (irq & 0x08) { // TX Done (Vysílání skončilo)
+        ESP_LOGD(TAG, "Vysilani hardwarove dokonceno.");
+        this->write_reg(0x12, 0xFF); // Vyčistit
+        this->write_reg(0x01, 0x85); // Okamžitě zpět do příjmu
     }
 
-    // 2. Obsluha DIO0 (IRQ)
-    if (this->dio0_pin_->digital_read()) {
-        uint8_t irq = this->read_reg(0x12);
-
-        // --- PRIORITA 1: CAD Done (bit 2 v registru 0x12) ---
-        if (irq & 0x04) { 
-            this->write_reg(0x12, 0xFF); // Smazat IRQ hned
-
-            if (irq & 0x01) { // CAD Detected (Kanal je obsazen)
-                ESP_LOGW(TAG, "Kanal obsazen, odklad...");
-                this->interval_ = 500 + (random_uint32() % 500);
-                
-                // Nevysíláme, takže se musíme hned vrátit do příjmu
-                this->write_reg(0x01, 0x85); 
-                this->write_reg(0x40, 0x00); // DIO0 zpět na RXDone
-                
-            } else { // Cisto (Budeme vysílat)
-                ESP_LOGW(TAG, "Kanal volny, odesilam paket.");
-                uint8_t current_rssi = this->read_reg(0x1B);
-                ESP_LOGI(TAG, "RSSI pred vysilanim: %d dBm", current_rssi - 164);
-                
-                // Funkce send_packet modul přepne do TX (0x83)
-                this->send_packet({0x55, 0xAA, 0x01});
-                this->interval_ = 10000 + (random_uint32() % 2000);
-                
-                // ZDE SE NIC DALŠÍHO NEPŘEPÍNÁ! 
-                // Modul teď vysílá. Necháme ho v TX režimu, dokud nevyvolá TX Done.
-            }
-            this->waiting_for_cad_ = false;
-            this->last_transmission_ = now;
-        } 
-        // --- PRIORITA 2: RX Done (bit 6) ---
-        else if (irq & 0x40) { 
-            uint8_t len = this->read_reg(0x13);
-            this->write_reg(0x0D, this->read_reg(0x10)); // RX Base do Pointeru
-            
-            this->enable();
-            this->transfer_byte(0x00); // Čtení FIFO
-            std::string out = "";
-            for(int i = 0; i < len; i++) {
-                char b[5]; sprintf(b, "%02X ", this->transfer_byte(0x00));
-                out += b;
-            }
-            this->disable();
-            
-            // Doplnění toho vašeho RSSI z přijatého paketu
-            int16_t pkt_rssi = (int16_t)this->read_reg(0x1B) - 164;
-            ESP_LOGI(TAG, "Prijato HEX: [%s] (RSSI: %d dBm)", out.c_str(), pkt_rssi);
-            
-            this->write_reg(0x12, 0xFF); // Vyčistit IRQ
-        }
-        // --- PRIORITA 3: TX Done (bit 3) ---
-        else if (irq & 0x08) { 
-            // SEM se program dostane až cca sekundu po zavolání send_packet()
-            ESP_LOGD(TAG, "Vysilani OK.");
-            this->write_reg(0x12, 0xFF); // Vyčistit IRQ
-            
-            // AŽ TADY vracíme modul bezpečně zpět do příjmu!
-            this->write_reg(0x01, 0x85); // Zpět do RX Continuous
-            this->write_reg(0x40, 0x00); // DIO0 zpět na hlídání příjmu (RXDone)
-        }
+    // --- B. SEKCE VYSÍLÁNÍ (Každých 10 vteřin) ---
+    // !!! U PŘIJÍMAČE ZAKOMENTUJTE CELÝ TENTO IF BLOK !!!
+    if (now - this->last_transmission_ > 10000) {
+        ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
+        
+        this->write_reg(0x01, 0x81); // Standby
+        this->write_reg(0x0D, 0x80); // TX Base
+        this->write_reg(0x0F, 0x80); // Pointer
+        
+        this->enable();
+        this->transfer_byte(0x00 | 0x80); // Write FIFO
+        this->transfer_byte(0xDE);
+        this->transfer_byte(0xAD);
+        this->transfer_byte(0xBE);
+        this->transfer_byte(0xEF);
+        this->disable();
+        
+        this->write_reg(0x22, 4);    // Délka 4 bajty
+        this->write_reg(0x01, 0x83); // Start TX
+        
+        this->last_transmission_ = now;
     }
 }
 
