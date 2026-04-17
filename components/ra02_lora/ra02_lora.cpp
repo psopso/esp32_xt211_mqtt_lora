@@ -101,12 +101,13 @@ void Ra02Lora::loop() {
       this->write_reg(0x12, 0xFF); // Vyčistit vlajky
     }
 
+/*
     // Přečteme si stavové vlajky rovnou z čipu
     uint8_t irq = this->read_reg(0x12);
 
     // --- A. SEKCE PŘÍJMU (Vyhodnocujeme vždy) ---
     if (irq & 0x40) { // RX Done
-/*
+
         uint8_t len = this->read_reg(0x13);
         this->write_reg(0x0D, this->read_reg(0x10)); // Nastavit ukazatel na začátek dat
         
@@ -123,7 +124,7 @@ void Ra02Lora::loop() {
         ESP_LOGI(TAG, "===== PRIJATO: [%s] (RSSI: %d dBm) =====", out.c_str(), rssi);
         
         this->write_reg(0x12, 0xFF); // Vyčistit vlajky
-*/
+
     }
     else if (irq & 0x20) { // CRC Error (Něco jsme zaslechli, ale je to rozbité)
         ESP_LOGW(TAG, "Prijato rozbite (CRC Error)!");
@@ -155,6 +156,7 @@ void Ra02Lora::loop() {
 
         ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
         this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
+*/
 /*        
         this->write_reg(0x01, 0x81); // Standby
         this->write_reg(0x0D, 0x80); // TX Base
