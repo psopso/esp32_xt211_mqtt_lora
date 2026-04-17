@@ -74,7 +74,7 @@ void Ra02Lora::loop() {
 
     // 1. Logika odesílání "majáku"
     if (!this->waiting_for_cad_ && (now - this->last_transmission_ > this->interval_)) {
-        this->start_cad();
+//        this->start_cad();
     }
 
     // 2. Obsluha DIO0 (IRQ)
