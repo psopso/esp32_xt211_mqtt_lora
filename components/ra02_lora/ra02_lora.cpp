@@ -82,6 +82,7 @@ void Ra02Lora::loop() {
         
         // Zde můžete pokračovat vyčítáním FIFO jako minule...
         this->write_reg(0x12, 0xFF); // Vyčistit vlajky v čipu    }
+    }
 }
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
