@@ -58,6 +58,7 @@ void Ra02Lora::setup() {
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
   arg->interrupt_triggered_ = true;
+  ESP_LOGI(TAG, "DIO pin interrupt");
 };
 
 void Ra02Lora::start_cad() {
@@ -88,7 +89,6 @@ void Ra02Lora::loop() {
 
     // B. OBSLUHA PŘERUŠENÍ (DIO0)
     if (this->dio0_pin_->digital_read()) {
-        ESP_LOGI(TAG, "DIO pin interrupt");
         uint8_t irq = this->read_reg(0x12);
         this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek
 
