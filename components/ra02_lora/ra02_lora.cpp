@@ -88,7 +88,7 @@ void Ra02Lora::loop() {
                 this->interval_ = 500 + (random_uint32() % 500);
             } else { // Cisto
                 ESP_LOGW(TAG, "Kanal volny, odesilam paket.");
-//                this->send_packet({0x55, 0xAA, 0x01});
+                this->send_packet({0x55, 0xAA, 0x01});
                 uint8_t current_rssi = this->read_reg(0x1B);
                 ESP_LOGI(TAG, "RSSI : %d dBm", current_rssi - 164);
                 this->interval_ = 10000 + (random_uint32() % 2000);
