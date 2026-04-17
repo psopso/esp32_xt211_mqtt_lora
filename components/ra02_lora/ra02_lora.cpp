@@ -65,6 +65,8 @@ void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
 }
 
 void Ra02Lora::loop() {
+    uint32_t now = millis();
+
     if (this->interrupt_triggered_) {
         this->interrupt_triggered_ = false; // Reset flagu
 
