@@ -79,7 +79,7 @@ void Ra02Lora::loop() {
 
         uint8_t irq = this->read_reg(0x12);
         this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek v čipu
-        ESP_LOGI("Reset vlajek v čipu");
+        ESP_LOGI(TAG, "Reset vlajek v čipu");
 
         if (irq & 0x40) { // RX Done
             uint8_t len = this->read_reg(0x13);
