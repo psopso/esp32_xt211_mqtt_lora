@@ -11,7 +11,7 @@ void Ra02Lora::setup() {
     this->reset_pin_->setup();
     
     // Hardwarový reset pinu nepotřebujeme, necháme jen DIO nezapojené
-    // this->dio0_pin_->setup(); // VYMAZÁNO
+    this->dio0_pin_->setup(); // VYMAZÁNO
 
     // Hardwarový reset SX1278
     this->reset_pin_->digital_write(false);
@@ -43,6 +43,9 @@ void Ra02Lora::setup() {
     this->write_reg(0x1D, 0x72); 
     this->write_reg(0x1E, 0x74); 
     this->write_reg(0x39, 0x12); // Sync Word
+
+    //DIO0
+    this->write_reg(0x40, 0x00);
 
     // 5. START DO PŘÍJMU
     this->write_reg(0x01, 0x85); // RX Continuous
