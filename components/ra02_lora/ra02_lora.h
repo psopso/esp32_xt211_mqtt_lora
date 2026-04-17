@@ -18,7 +18,7 @@ class Ra02Lora : public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRS
   void dump_config() override;
 
   void set_reset_pin(InternalGPIOPin *pin) { reset_pin_ = pin; }
-  void set_dio0_pin(GPIOPin *pin) { dio0_pin_ = pin; }
+  void set_dio0_pin(InternalGPIOPin *pin) { dio0_pin_ = pin; }
   void set_dio1_pin(InternalGPIOPin *pin) { dio1_pin_ = pin; }
 
   void send_packet(std::vector<uint8_t> data);
@@ -29,7 +29,7 @@ static void IRAM_ATTR gpio_intr_handler(void *arg);
 
  protected:
   InternalGPIOPin *reset_pin_;
-  GPIOPin *dio0_pin_;
+  InternalGPIOPin *dio0_pin_;
   InternalGPIOPin *dio1_pin_;
 
   uint32_t last_transmission_ = 0;
