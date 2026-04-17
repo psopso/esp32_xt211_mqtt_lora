@@ -10,12 +10,7 @@ void Ra02Lora::setup() {
     this->spi_setup();
     this->reset_pin_->setup();
     this->dio0_pin_->setup();
-    this->dio0_pin_->attach_interrupt(
-      []() {
-        // ISR handler
-      },
-      gpio::INTERRUPT_RISING_EDGE
-);
+    this->dio0_pin_->make_input(); // Explicitně nastavit jako vstup
 
     // Rychlý reset
     this->reset_pin_->digital_write(false);
