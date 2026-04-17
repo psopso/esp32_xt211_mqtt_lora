@@ -83,7 +83,7 @@ void Ra02Lora::loop() {
     if (this->interrupt_triggered_) {
       this->interrupt_triggered_ = false; // Reset příznaku
       ESP_LOGI("ra02", "DIO0 pin interrupt zachycen v loopu!");
-    
+      this->interrupt_triggered_ = false;
     }
 
     // A. LOGIKA VYSÍLÁNÍ (Maják každých 10s)
