@@ -17,12 +17,6 @@ void Ra02Lora::setup() {
         gpio::INTERRUPT_RISING_EDGE      // Typ hrany
       );
 
-    // Musí být označen jako IRAM_ATTR pro běh z RAM
-    static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg) {
-      // Minimální logika (např. nastavení flagu nebo zápis do fronty)
-      arg->interrupt_triggered_ = true;
-    };
-
     // Rychlý reset
     this->reset_pin_->digital_write(false);
     delay(10);
@@ -59,6 +53,12 @@ void Ra02Lora::setup() {
     this->write_reg(0x01, 0x85); 
     ESP_LOGI(TAG, "Ra02 Ready (434MHz, SF7, PA_BOOST)");
 }
+
+// Musí být označen jako IRAM_ATTR pro běh z RAM
+static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg) {
+  // Minimální logika (např. nastavení flagu nebo zápis do fronty)
+  arg->interrupt_triggered_ = true;
+};
 
 void Ra02Lora::start_cad() {
     this->waiting_for_cad_ = true;
