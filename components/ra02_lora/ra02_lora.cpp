@@ -126,8 +126,8 @@ void Ra02Lora::loop() {
         bool state = this->dio0_pin_->digital_read();
         ESP_LOGI("gpio", "DIO0 stav: %d", state);
 
-        ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
-        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
+//        ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
+//        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
 /*        
         this->write_reg(0x01, 0x81); // Standby
         this->write_reg(0x0D, 0x80); // TX Base
