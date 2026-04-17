@@ -60,7 +60,7 @@ void Ra02Lora::setup() {
     ESP_LOGI(TAG, ">>> LORA BARE-METAL START <<<");
 }
 
-void IRAM_ATTR Ra02Lora::gpio_intr_handler(void *arg) {
+void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
     this->interrupt_triggered_ = true;
 }
 

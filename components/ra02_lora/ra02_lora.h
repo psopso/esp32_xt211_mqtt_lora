@@ -25,7 +25,7 @@ class Ra02Lora : public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRS
   void start_cad();
 
 // DEKLARACE STATICKÉ FUNKCE PRO PŘERUŠENÍ
-static void IRAM_ATTR gpio_intr_handler(void *arg);
+static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
 
  protected:
   InternalGPIOPin *reset_pin_;
