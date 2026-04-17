@@ -117,6 +117,7 @@ void Ra02Lora::loop() {
 
     // --- B. SEKCE VYSÍLÁNÍ (Každých 10 vteřin) ---
     // !!! U PŘIJÍMAČE ZAKOMENTUJTE CELÝ TENTO IF BLOK !!!
+/*
     if (now - this->last_transmission_ > 10000) {
         ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
         
@@ -137,6 +138,7 @@ void Ra02Lora::loop() {
         
         this->last_transmission_ = now;
     }
+*/
 }
 
 void Ra02Lora::dump_config() {
