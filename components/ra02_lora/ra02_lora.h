@@ -34,6 +34,8 @@ static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
 
+  volatile bool interrupt_triggered_{false}; 
+
 };
 
 
