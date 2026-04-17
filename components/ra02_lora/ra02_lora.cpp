@@ -122,6 +122,10 @@ void Ra02Lora::loop() {
     // --- B. SEKCE VYSÍLÁNÍ (Každých 10 vteřin) ---
     // !!! U PŘIJÍMAČE ZAKOMENTUJTE CELÝ TENTO IF BLOK !!!
     if (now - this->last_transmission_ > 10000) {
+        //Tady si načtu pin DIO0
+        bool state = this->dio0_pin_->digital_read();
+        ESP_LOGI("gpio", "DIO0 stav: %d", state);
+
         ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
         this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
 /*        
