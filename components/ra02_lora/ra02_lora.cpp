@@ -92,6 +92,7 @@ void Ra02Lora::loop() {
 
     // --- A. SEKCE PŘÍJMU (Vyhodnocujeme vždy) ---
     if (irq & 0x40) { // RX Done
+/*
         uint8_t len = this->read_reg(0x13);
         this->write_reg(0x0D, this->read_reg(0x10)); // Nastavit ukazatel na začátek dat
         
@@ -108,6 +109,7 @@ void Ra02Lora::loop() {
         ESP_LOGI(TAG, "===== PRIJATO: [%s] (RSSI: %d dBm) =====", out.c_str(), rssi);
         
         this->write_reg(0x12, 0xFF); // Vyčistit vlajky
+*/
     }
     else if (irq & 0x20) { // CRC Error (Něco jsme zaslechli, ale je to rozbité)
         ESP_LOGW(TAG, "Prijato rozbite (CRC Error)!");
