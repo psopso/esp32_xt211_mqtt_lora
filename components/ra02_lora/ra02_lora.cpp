@@ -172,9 +172,10 @@ void Ra02Lora::loop() {
         
         this->write_reg(0x22, 4);    // Délka 4 bajty
         this->write_reg(0x01, 0x83); // Start TX
-*/        
+        
         this->last_transmission_ = now;
     }
+*/
 }
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
