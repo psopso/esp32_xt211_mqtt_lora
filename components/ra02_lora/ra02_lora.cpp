@@ -145,6 +145,7 @@ void Ra02Lora::loop() {
         ESP_LOGI("lora", "IRQ flags: 0x%02X", irq);
         //clear irq flags
         this->write_reg(0x12, 0xFF); // Vyčistit vlajky
+        delay(10);
         irq = this->read_reg(0x12);
         ESP_LOGI("lora", "IRQ flags after clear: 0x%02X", irq);
 
