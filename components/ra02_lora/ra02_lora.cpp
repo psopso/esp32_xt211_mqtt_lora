@@ -125,7 +125,7 @@ void Ra02Lora::loop() {
         //Tady si načtu pin DIO0
         bool state = this->dio0_pin_->digital_read();
         ESP_LOGI("gpio", "DIO0 stav: %d", state);
-        uint8_t irq = this->read_reg(REG_IRQ_FLAGS);
+        uint8_t irq = this->read_reg(0x12);
         ESP_LOGI("lora", "IRQ flags: 0x%02X", irq);
 
         ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
