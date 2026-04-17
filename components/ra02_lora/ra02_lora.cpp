@@ -8,7 +8,8 @@ namespace ra02_lora {
 static const char *const TAG = "ra02_lora";
 
 void Ra02Lora::setup() {
-    static QueueHandle_t gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
+    // 1. Vytvoření fronty (kapacita 10 prvků typu uint32_t)
+    this->lora_queue_ = xQueueCreate(10, sizeof(uint32_t));
 
     this->spi_setup();
     this->reset_pin_->setup();
@@ -62,13 +63,18 @@ void Ra02Lora::setup() {
     ESP_LOGI(TAG, ">>> LORA BARE-METAL START <<<");
 }
 
-QueueHandle_t gpio_evt_queue;
-// Musí být označen jako IRAM_ATTR pro běh z RAM
-void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
-  // Minimální logika (např. nastavení flagu nebo zápis do fronty)
-  //arg->interrupt_triggered_ = true;
-  xQueueSendFromISR(gpio_evt_queue, &pin_num, NULL);
-};
+void IRAM_ATTR Ra02Lora::gpio_intr_handler(void *arg) {
+    // Přetypujeme argument zpět na naši třídu
+    Ra02Lora *self = static_cast<Ra02Lora*>(arg);
+    
+    // Získáme číslo pinu (volitelné, můžeme poslat i fixní hodnotu)
+    uint32_t pin_no = 27; 
+
+    // Odeslání do fronty z ISR (FromISR verze!)
+    // Třetí parametr (pxHigherPriorityTaskWoken) můžeme nechat NULL, 
+    // ESPHome si s přeplánováním poradí v loopu.
+    xQueueSendFromISR(self->lora_queue_, &pin_no, NULL);
+}
 
 void Ra02Lora::loop() {
     uint32_t io_num;
