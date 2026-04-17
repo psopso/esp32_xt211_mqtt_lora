@@ -98,45 +98,6 @@ void Ra02Lora::loop() {
             this->write_reg(0x01, 0x85); 
         }
     }
-
-    // --- B. SEKCE VYSÍLÁNÍ (Každých 10 vteřin) ---
-    // !!! U PŘIJÍMAČE ZAKOMENTUJTE CELÝ TENTO IF BLOK !!!
-    if (now - this->last_transmission_ > 10000) {
-        //Tady si načtu pin DIO0
-        bool state = this->dio0_pin_->digital_read();
-        ESP_LOGI("gpio", "DIO0 stav: %d", state);
-        uint8_t irq = this->read_reg(0x12);
-        ESP_LOGI("lora", "IRQ flags: 0x%02X", irq);
-        //clear irq flags
-        this->write_reg(0x12, 0xFF); // Vyčistit vlajky
-        delay(10);
-        irq = this->read_reg(0x12);
-        ESP_LOGI("lora", "IRQ flags after clear: 0x%02X", irq);
-        state = this->dio0_pin_->digital_read();
-        ESP_LOGI("gpio", "DIO0 stav po clear: %d", state);
-
-
-
-        ESP_LOGI(TAG, "Odesilam paket (DE AD BE EF)...");
-        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
-
-        this->write_reg(0x01, 0x81); // Standby
-        this->write_reg(0x0D, 0x80); // TX Base
-        this->write_reg(0x0F, 0x80); // Pointer
-        
-        this->enable();
-        this->transfer_byte(0x00 | 0x80); // Write FIFO
-        this->transfer_byte(0xDE);
-        this->transfer_byte(0xAD);
-        this->transfer_byte(0xBE);
-        this->transfer_byte(0xEF);
-        this->disable();
-        
-        this->write_reg(0x22, 4);    // Délka 4 bajty
-        this->write_reg(0x01, 0x83); // Start TX
-        
-        this->last_transmission_ = now;
-    }
 }
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
