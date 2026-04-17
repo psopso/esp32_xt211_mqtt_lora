@@ -61,7 +61,7 @@ void Ra02Lora::setup() {
 }
 
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
-    this->interrupt_triggered_ = true;
+    arg->interrupt_triggered_ = true;
 }
 
 void Ra02Lora::loop() {
