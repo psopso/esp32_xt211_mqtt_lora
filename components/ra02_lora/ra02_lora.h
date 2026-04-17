@@ -3,6 +3,11 @@
 #include "esphome/components/spi/spi.h"
 #include <vector>
 
+struct LoraPacket {
+    std::vector<uint8_t> data;
+    int16_t rssi;
+};
+
 namespace esphome {
 namespace ra02_lora {
 
@@ -34,6 +39,7 @@ static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
 
+  QueueHandle_t lora_queue_;
   volatile bool interrupt_triggered_{false}; 
 
 };
