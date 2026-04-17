@@ -8,7 +8,7 @@ namespace ra02_lora {
 static const char *const TAG = "ra02_lora";
 
 void Ra02Lora::setup() {
-    //gpio_install_isr_service(0);
+    static QueueHandle_t gpio_evt_queue = xQueueCreate(10, sizeof(uint32_t));
 
     this->spi_setup();
     this->reset_pin_->setup();
@@ -66,7 +66,8 @@ QueueHandle_t gpio_evt_queue;
 // Musí být označen jako IRAM_ATTR pro běh z RAM
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
-  arg->interrupt_triggered_ = true;
+  //arg->interrupt_triggered_ = true;
+  xQueueSendFromISR(gpio_evt_queue, &pin_num, NULL);
 };
 
 void Ra02Lora::loop() {
