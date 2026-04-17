@@ -15,7 +15,7 @@ void Ra02Lora::setup() {
         // ISR handler
       },
       gpio::INTERRUPT_RISING_EDGE
-);
+    );
 
     // Rychlý reset
     this->reset_pin_->digital_write(false);
