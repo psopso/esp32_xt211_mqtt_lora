@@ -32,6 +32,8 @@ void Ra02Lora::setup() {
     }
 
     // KONFIGURACE MODEMU
+    this->write_reg(0x01, 0x80); // Sleep
+    delay(10);
     this->write_reg(0x01, 0x81); // Standby mode (nutné pro zápis registrů)
     
     // Frekvence 434.0 MHz
