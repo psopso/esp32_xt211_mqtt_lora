@@ -25,6 +25,13 @@ void Ra02Lora::setup() {
         return;
     }
 
+    // 2. Registrace ISR handleru přes ESPHome abstrakci
+    this->dio0_pin_->attach_interrupt(
+      &Ra02Lora::gpio_intr_handler, // Statická nebo staticky dostupná funkce
+      this,                            // Argument předaný do handleru
+      gpio::INTERRUPT_RISING_EDGE      // Typ hrany
+    );
+
     // 1. ZÁKLADNÍ NASTAVENÍ
     this->write_reg(0x01, 0x80); // Sleep
     delay(10);
