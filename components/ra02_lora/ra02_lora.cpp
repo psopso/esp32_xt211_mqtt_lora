@@ -30,7 +30,7 @@ void Ra02Lora::setup() {
     this->write_reg(0x08, 0x00);
 
     this->write_reg(0x1D, 0x72); // BW 125, CR 4/5
-    this->write_reg(0x1E, 0xC4); // SF12, CRC On
+    this->write_reg(0x1E, 0x74); // SF7, CRC On
     this->write_reg(0x39, 0x12); // Sync Word
     this->write_reg(0x0C, 0x23); // LNA Max Gain
 
