@@ -8,7 +8,7 @@ namespace ra02_lora {
 static const char *const TAG = "ra02_lora";
 
 void Ra02Lora::setup() {
-    gpio_install_isr_service(0);
+    //gpio_install_isr_service(0);
 
     this->spi_setup();
     this->reset_pin_->setup();
