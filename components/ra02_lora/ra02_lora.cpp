@@ -67,17 +67,21 @@ QueueHandle_t gpio_evt_queue;
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
   // Minimální logika (např. nastavení flagu nebo zápis do fronty)
   arg->interrupt_triggered_ = true;
+  uint32_t gpio_num = (uint32_t) arg;
+  xQueueSendFromISR(gpio_evt_queue, &gpio_num, NULL);
 };
 
 void Ra02Lora::loop() {
     uint32_t now = millis();
     
     if (this->interrupt_triggered_) {
-      this->interrupt_triggered_ = false;
-      ESP_LOGD(TAG, "DIO0 interrupt");
-      this->write_reg(0x12, 0xFF); // Vyčistit vlajky
-    }
-
+	this->interrupt_triggered_ = false;
+        
+        uint8_t irq = this->read_reg(0x12);
+        ESP_LOGI(TAG, "!!! DIO0 INTERRUPT ZACHYCEN !!! IRQ Flag: 0x%02X", irq);
+        
+        // Zde můžete pokračovat vyčítáním FIFO jako minule...
+        this->write_reg(0x12, 0xFF); // Vyčistit vlajky v čipu    }
 }
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
