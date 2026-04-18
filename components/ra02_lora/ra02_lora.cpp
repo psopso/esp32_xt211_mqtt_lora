@@ -73,12 +73,12 @@ void Ra02Lora::loop() {
 
     // A. LOGIKA VYSÍLÁNÍ (Maják každých 10s)
     // --- U PŘIJÍMAČE TENTO BLOK SMAŽTE NEBO ZAKOMENTUJTE ---
-
+/*
     if (now - this->last_transmission_ > 10000) {
         this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
         this->last_transmission_ = now;
     }
-
+*/
     if (this->interrupt_triggered_) {
         this->interrupt_triggered_ = false; // Reset flagu
 
@@ -122,7 +122,6 @@ void Ra02Lora::send_packet(std::vector<uint8_t> data) {
 //    this->write_reg(0x0D, 0x80); // TX Base pointer
 //    this->write_reg(0x0F, 0x80); // FIFO pointer
     
-    // SPRÁVNÉ NASTAVENÍ UKAZATELŮ
     this->write_reg(0x0E, 0x80); // RegFifoTxBaseAddr: Nastavíme začátek TX na 0x80
     this->write_reg(0x0D, 0x80); // RegFifoAddrPtr: Přesuneme pracovní ukazatel na 0x80
     // Zápis do 0x0F jsme úplně smazali, aby se RX paměť nerozbila!
