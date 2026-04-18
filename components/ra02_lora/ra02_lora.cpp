@@ -52,6 +52,10 @@ void Ra02Lora::setup() {
     this->write_reg(0x1E, 0x74); 
     this->write_reg(0x39, 0x12); // Sync Word
 
+    //
+    this->write_reg(0x0F, 0x00); // RX base
+    this->write_reg(0x0E, 0x80); // TX base
+
     //DIO0
     this->write_reg(0x40, 0x00);
 
@@ -79,7 +83,8 @@ void Ra02Lora::loop() {
         this->interrupt_triggered_ = false; // Reset flagu
 
         uint8_t irq = this->read_reg(0x12);
-        this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek v čipu
+        //this->write_reg(0x12, 0xFF); // Okamžitý reset vlajek v čipu
+        this->write_reg(0x12, irq);
         ESP_LOGI(TAG, "Reset vlajek v čipu");
 
         if (irq & 0x40) { // RX Done
@@ -104,6 +109,8 @@ void Ra02Lora::loop() {
         
         if (irq & 0x08) { // TX Done
             ESP_LOGD("lora", "Vysilani OK, navrat do RX.");
+            // reset RX
+            this->write_reg(0x0D, 0x00); // RX ptr
             this->write_reg(0x01, 0x85); 
         }
     }
