@@ -19,7 +19,7 @@ void Ra02Lora::setup() {
     this->reset_pin_->setup();
     this->dio0_pin_->setup();
 
-    // HW reset
+    // reset
     this->reset_pin_->digital_write(false);
     delay(10);
     this->reset_pin_->digital_write(true);
@@ -31,26 +31,24 @@ void Ra02Lora::setup() {
         return;
     }
 
-    // ================= GPIO ISR (ESP-IDF) =================
+    // GPIO ISR (ESP-IDF)
     gpio_num_t pin = (gpio_num_t)this->dio0_pin_->get_pin();
 
     gpio_config_t io_conf = {};
     io_conf.intr_type = GPIO_INTR_POSEDGE;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pin_bit_mask = (1ULL << pin);
-    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
-    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;
     gpio_config(&io_conf);
 
-    gpio_install_isr_service(0);
+    static bool isr_installed = false;
+    if (!isr_installed) {
+        gpio_install_isr_service(0);
+        isr_installed = true;
+    }
 
-    gpio_isr_handler_add(
-        pin,
-        (gpio_isr_t) &Ra02Lora::gpio_intr_handler,
-        this
-    );
+    gpio_isr_handler_add(pin, gpio_intr_handler, this);
 
-    // ================= LoRa init =================
+    // LoRa init
     this->write_reg(0x01, 0x80);
     delay(10);
     this->write_reg(0x01, 0x81);
@@ -68,35 +66,58 @@ void Ra02Lora::setup() {
     this->write_reg(0x0F, 0x00);
     this->write_reg(0x0E, 0x80);
 
-    this->write_reg(0x40, 0x00); // DIO0 = RX_DONE
+    this->write_reg(0x40, 0x00); // RX_DONE
 
     this->write_reg(0x01, 0x85); // RX
 
     this->state_ = STATE_RX;
+    this->last_rx_time_ = millis();
 
-    ESP_LOGI(TAG, ">>> LORA START (ESP-IDF ISR) <<<");
+    ESP_LOGI(TAG, ">>> LORA READY (IDF ISR + watchdogs) <<<");
 }
 
 // ================= LOOP =================
 void Ra02Lora::loop() {
     uint32_t now = millis();
 
-    // TX interval
+    // ===== TX interval =====
     if ((now - this->last_transmission_) > this->interval_ && this->state_ == STATE_RX) {
         this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
         this->last_transmission_ = now;
     }
 
-    // fallback (už skoro nebude potřeba)
-    static uint32_t last_check = 0;
-    if (now - last_check > 200) {
-        last_check = now;
-        uint8_t irq = this->read_reg(0x12);
+    // ===== TX TIMEOUT =====
+    if (this->state_ == STATE_TX && (now - this->tx_started_ > this->tx_timeout_ms_)) {
+        ESP_LOGW(TAG, "TX timeout → recovery");
 
-        if (irq != 0 && this->dio0_pin_->digital_read()) {
-            ESP_LOGW(TAG, "Fallback IRQ: 0x%02X", irq);
-            this->interrupt_triggered_ = true;
-        }
+        this->write_reg(0x01, 0x81); // standby
+        this->write_reg(0x40, 0x00); // RX_DONE
+        this->write_reg(0x01, 0x85); // RX
+
+        this->state_ = STATE_RX;
+    }
+
+    // ===== RX TIMEOUT =====
+    if (this->state_ == STATE_RX && (now - this->last_rx_time_ > this->rx_timeout_ms_)) {
+        ESP_LOGW(TAG, "RX timeout → restart RX");
+
+        this->write_reg(0x01, 0x81);
+        this->write_reg(0x12, 0xFF);
+        this->write_reg(0x40, 0x00);
+        this->write_reg(0x01, 0x85);
+
+        this->last_rx_time_ = now;
+    }
+
+    // ===== CAD trigger (každých 5s) =====
+    if (!this->cad_running_ && (now % 5000 < 50) && this->state_ == STATE_RX) {
+        this->start_cad();
+    }
+
+    // ===== IRQ fallback =====
+    uint8_t irq = this->read_reg(0x12);
+    if (irq != 0 && this->dio0_pin_->digital_read()) {
+        this->interrupt_triggered_ = true;
     }
 
     if (!this->interrupt_triggered_)
@@ -104,13 +125,15 @@ void Ra02Lora::loop() {
 
     this->interrupt_triggered_ = false;
 
-    uint8_t irq = this->read_reg(0x12);
+    irq = this->read_reg(0x12);
     this->write_reg(0x12, 0xFF);
 
+    // ===== STATE MACHINE =====
     switch (this->state_) {
 
     case STATE_RX:
         if (irq & 0x40) {
+            this->last_rx_time_ = now;
 
             uint8_t len = this->read_reg(0x13);
             uint8_t addr = this->read_reg(0x10);
@@ -131,6 +154,18 @@ void Ra02Lora::loop() {
 
             ESP_LOGI(TAG, "RX: [%s] RSSI=%d dBm", out.c_str(), rssi);
         }
+
+        // CAD done
+        if (irq & 0x04) {
+            bool detected = irq & 0x01;
+            ESP_LOGD(TAG, "CAD done, activity=%d", detected);
+
+            this->cad_running_ = false;
+
+            // zpět do RX
+            this->write_reg(0x40, 0x00);
+            this->write_reg(0x01, 0x85);
+        }
         break;
 
     case STATE_TX:
@@ -138,12 +173,9 @@ void Ra02Lora::loop() {
             ESP_LOGD(TAG, "TX done → RX");
 
             this->write_reg(0x01, 0x81);
-
             this->write_reg(0x0F, 0x00);
             this->write_reg(0x0D, 0x00);
-
             this->write_reg(0x40, 0x00);
-
             this->write_reg(0x01, 0x85);
 
             this->state_ = STATE_RX;
@@ -155,6 +187,7 @@ void Ra02Lora::loop() {
 // ================= SEND =================
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
     this->state_ = STATE_TX;
+    this->tx_started_ = millis();
 
     this->write_reg(0x01, 0x81);
 
@@ -170,10 +203,19 @@ void Ra02Lora::send_packet(std::vector<uint8_t> data) {
     this->write_reg(0x22, data.size());
 
     this->write_reg(0x40, 0x40); // TX_DONE
-
     this->write_reg(0x01, 0x83);
 
     ESP_LOGI(TAG, "TX start");
+}
+
+// ================= CAD =================
+void Ra02Lora::start_cad() {
+    ESP_LOGD(TAG, "Start CAD");
+
+    this->cad_running_ = true;
+
+    this->write_reg(0x40, 0x80); // DIO0 = CAD_DONE
+    this->write_reg(0x01, 0x87); // CAD mode
 }
 
 // ================= SPI =================
@@ -193,7 +235,7 @@ uint8_t Ra02Lora::read_reg(uint8_t reg) {
 }
 
 void Ra02Lora::dump_config() {
-    ESP_LOGCONFIG(TAG, "RA02 LoRa (ESP-IDF ISR)");
+    ESP_LOGCONFIG(TAG, "RA02 LoRa FULL (ISR + watchdog + CAD)");
 }
 
 } // namespace
