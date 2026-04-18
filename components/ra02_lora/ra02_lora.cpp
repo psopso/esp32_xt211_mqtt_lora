@@ -110,9 +110,15 @@ void Ra02Lora::loop() {
 
 void Ra02Lora::send_packet(std::vector<uint8_t> data) {
     this->write_reg(0x01, 0x81); // Standby
-    this->write_reg(0x0D, 0x80); // TX Base pointer
-    this->write_reg(0x0F, 0x80); // FIFO pointer
+
+//    this->write_reg(0x0D, 0x80); // TX Base pointer
+//    this->write_reg(0x0F, 0x80); // FIFO pointer
     
+    // SPRÁVNÉ NASTAVENÍ UKAZATELŮ
+    this->write_reg(0x0E, 0x80); // RegFifoTxBaseAddr: Nastavíme začátek TX na 0x80
+    this->write_reg(0x0D, 0x80); // RegFifoAddrPtr: Přesuneme pracovní ukazatel na 0x80
+    // Zápis do 0x0F jsme úplně smazali, aby se RX paměť nerozbila!
+
     this->enable();
     this->transfer_byte(0x00 | 0x80); // Write FIFO
     for (uint8_t b : data) this->transfer_byte(b);
