@@ -8,8 +8,9 @@ namespace ra02_lora {
 static const char *const TAG = "ra02_lora";
 
 // ================= ISR =================
-void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
-    arg->interrupt_triggered_ = true;
+void IRAM_ATTR Ra02Lora::gpio_intr_handler(void *arg) {
+    auto *self = static_cast<Ra02Lora *>(arg);
+    self->interrupt_triggered_ = true;
 }
 
 // ================= SETUP =================
