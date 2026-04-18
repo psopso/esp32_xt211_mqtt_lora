@@ -16,7 +16,12 @@ enum LoraState {
     STATE_TX
 };
 
-class Ra02Lora : public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRST, spi::CLOCK_POLARITY_LOW, spi::CLOCK_PHASE_LEADING, spi::DATA_RATE_1MHZ> {
+class Ra02Lora : public Component, public spi::SPIDevice<
+    spi::BIT_ORDER_MSB_FIRST,
+    spi::CLOCK_POLARITY_LOW,
+    spi::CLOCK_PHASE_LEADING,
+    spi::DATA_RATE_1MHZ> {
+
  public:
   void setup() override;
   void loop() override;
@@ -29,27 +34,30 @@ class Ra02Lora : public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRS
   void send_packet(std::vector<uint8_t> data);
   void start_cad();
 
-// DEKLARACE STATICKÉ FUNKCE PRO PŘERUŠENÍ
-static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
+  // 🔥 změněná signatura
+  static void IRAM_ATTR gpio_intr_handler(void *arg);
 
  protected:
   InternalGPIOPin *reset_pin_;
   InternalGPIOPin *dio0_pin_;
   InternalGPIOPin *dio1_pin_;
 
-  uint32_t last_transmission_ = 0;
-  uint32_t interval_ = 10000;
-  bool waiting_for_cad_ = false;
+  uint32_t last_transmission_{0};
+  uint32_t interval_{10000};
+
+  // optional robustness
+  uint32_t last_irq_check_{0};
+  uint32_t tx_started_{0};
+  uint32_t tx_timeout_ms_{2000};
+
+  bool waiting_for_cad_{false};
 
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
 
-  volatile bool interrupt_triggered_{false}; 
+  volatile bool interrupt_triggered_{false};
   volatile LoraState state_{STATE_RX};
-
 };
-
-
 
 } // namespace ra02_lora
 } // namespace esphome
