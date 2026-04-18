@@ -79,6 +79,29 @@ void Ra02Lora::loop() {
         this->last_transmission_ = now;
     }
 
+    // ================= FALLBACK IRQ =================
+    static uint32_t last_irq_check = 0;
+
+    if (now - last_irq_check > 100) {
+        last_irq_check = now;
+
+        uint8_t irq = this->read_reg(0x12);
+
+        if (irq != 0) {
+            ESP_LOGW(TAG, "IRQ fallback: 0x%02X", irq);
+            this->interrupt_triggered_ = true;
+        }
+
+        // DIO0 stuck HIGH ochrana
+        if (this->dio0_pin_->digital_read()) {
+            if (irq != 0) {
+                ESP_LOGW(TAG, "DIO0 stuck HIGH → recovery");
+                this->interrupt_triggered_ = true;
+            }
+        }
+    }
+
+    // ================= IRQ processing =================
     if (!this->interrupt_triggered_)
         return;
 
