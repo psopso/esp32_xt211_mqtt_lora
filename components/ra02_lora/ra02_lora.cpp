@@ -73,12 +73,12 @@ void Ra02Lora::loop() {
 
     // A. LOGIKA VYSÍLÁNÍ (Maják každých 10s)
     // --- U PŘIJÍMAČE TENTO BLOK SMAŽTE NEBO ZAKOMENTUJTE ---
-/*
+
     if (now - this->last_transmission_ > 10000) {
         this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
         this->last_transmission_ = now;
     }
-*/
+
     if (this->interrupt_triggered_) {
         this->interrupt_triggered_ = false; // Reset flagu
 
