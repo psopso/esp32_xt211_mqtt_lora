@@ -11,11 +11,6 @@ struct LoraPacket {
 namespace esphome {
 namespace ra02_lora {
 
-enum LoraState {
-    STATE_RX,
-    STATE_TX
-};
-
 class Ra02Lora : public Component, public spi::SPIDevice<spi::BIT_ORDER_MSB_FIRST, spi::CLOCK_POLARITY_LOW, spi::CLOCK_PHASE_LEADING, spi::DATA_RATE_1MHZ> {
  public:
   void setup() override;
@@ -45,7 +40,6 @@ static void IRAM_ATTR gpio_intr_handler(Ra02Lora *arg);
   uint8_t read_reg(uint8_t reg);
 
   volatile bool interrupt_triggered_{false}; 
-  volatile LoraState state_{STATE_RX};
 
 };
 
