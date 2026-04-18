@@ -59,6 +59,8 @@ class Ra02Lora : public Component, public spi::SPIDevice<
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
 
+  sstd::function<void(std::vector<uint8_t>, int16_t)> on_receive_;
+
   volatile bool interrupt_triggered_{false};
   volatile LoraState state_{STATE_RX};
 };

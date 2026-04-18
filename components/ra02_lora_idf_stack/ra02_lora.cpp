@@ -153,6 +153,9 @@ void Ra02Lora::loop() {
             int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
 
             ESP_LOGI(TAG, "RX: [%s] RSSI=%d dBm", out.c_str(), rssi);
+
+            if (this->on_receive_) {
+              this->on_receive_(data, rssi);
         }
 
         // CAD done
