@@ -22,6 +22,13 @@ enum LoraState {
 
 // Třída dědí z Component, SPIDevice a nově i z ILoraDriver
 class Ra02Lora : public Component, public spi::SPIDevice<...>, public ILoraDriver {
+class Ra02Lora : public Component, public spi::SPIDevice<
+    spi::BIT_ORDER_MSB_FIRST,
+    spi::CLOCK_POLARITY_LOW,
+    spi::CLOCK_PHASE_LEADING,
+    spi::DATA_RATE_1MHZ>,
+    public ILoraDriver {
+
 
  public:
   void setup() override;
