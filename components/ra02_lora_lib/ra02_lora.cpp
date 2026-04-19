@@ -79,6 +79,7 @@ void Ra02Lora::loop() {
         this->last_transmission_ = now;
     }
 
+    /*
     // ================= FALLBACK IRQ =================
     static uint32_t last_irq_check = 0;
 
@@ -100,7 +101,7 @@ void Ra02Lora::loop() {
             }
         }
     }
-
+    */
     // ================= IRQ processing =================
     if (!this->interrupt_triggered_)
         return;
