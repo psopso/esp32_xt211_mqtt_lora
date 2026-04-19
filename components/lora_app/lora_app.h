@@ -7,6 +7,7 @@ static const char *const TAG = "lora_app";
 
 namespace esphome {
 namespace lora_app {
+#include "ilora_driver.h" // Includujeme POUZE rozhraní
 
 class LoraApp : public Component {
  public:
