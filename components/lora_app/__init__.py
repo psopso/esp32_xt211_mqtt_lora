@@ -8,7 +8,7 @@ Lora_App = lora_app_ns.class_('LoraApp', cg.Component)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(LoraApp),
+    cv.GenerateID(): cv.declare_id(Lora_App),
 }).extend(cv.COMPONENT_SCHEMA)
 
 
