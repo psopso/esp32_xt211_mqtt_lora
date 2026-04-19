@@ -5,7 +5,7 @@
 namespace esphome {
 namespace ra02_lora {
 
-static const char *const TAG = "ra02_lora";
+static const char *const TAG = "ra02_lora_lib";
 
 // ================= ISR =================
 void IRAM_ATTR Ra02Lora::gpio_intr_handler(void *arg) {
