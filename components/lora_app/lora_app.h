@@ -1,13 +1,12 @@
 #pragma once
 #include "esphome/core/component.h"
 #include "esphome/core/log.h"
-//#include "ilora_driver.h" // Includujeme POUZE rozhraní
+#include "ilora_driver.h" // Includujeme POUZE rozhraní
 
 static const char *const TAG = "lora_app";
 
 namespace esphome {
 namespace lora_app {
-#include "ilora_driver.h" // Includujeme POUZE rozhraní
 
 class LoraApp : public Component {
  public:

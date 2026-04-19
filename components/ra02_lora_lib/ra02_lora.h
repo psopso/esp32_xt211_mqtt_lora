@@ -6,7 +6,7 @@
 
 // Hardware si includuje definici rozhraní, aby ji mohl splnit
 //#include "esphome/components/lora_app/ilora_driver.h"
-//#include "ilora_driver.h"
+#include "ilora_driver.h"
 
 //struct LoraPacket {
 //    std::vector<uint8_t> data;
@@ -15,7 +15,6 @@
 
 namespace esphome {
 namespace ra02_lora {
-#include "ilora_driver.h"
 
 enum LoraState {
     STATE_RX,

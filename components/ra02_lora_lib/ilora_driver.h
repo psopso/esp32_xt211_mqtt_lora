@@ -2,18 +2,18 @@
 #include <vector>
 #include <stdint.h>
 
-struct LoraPacket {
+struct LoraPacketLib {
     std::vector<uint8_t> data;
     int16_t rssi;
 };
 
 // Toto je naše rozhraní. "I" na začátku značí Interface.
-class ILoraDriver {
+class ILoraDriverLib {
  public:
   virtual ~ILoraDriver() = default;
   
   // Každý driver, který toto rozhraní implementuje, MUSÍ mít tyto metody:
   virtual bool available() = 0;
-  virtual LoraPacket read_packet() = 0;
+  virtual LoraPacketLib read_packet() = 0;
   virtual void send_packet(std::vector<uint8_t> data) = 0;
 };
