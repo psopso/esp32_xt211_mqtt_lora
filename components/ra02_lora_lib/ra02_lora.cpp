@@ -172,12 +172,59 @@ LoraPacket Ra02Lora::read_packet() {
     return pkt;
 }
 
-// (zbytek metod send_packet, start_cad, write_reg, read_reg, dump_config zůstává beze změny)
-void Ra02Lora::send_packet(std::vector<uint8_t> data) { /* váš kód */ }
-void Ra02Lora::start_cad() { /* váš kód */ }
-void Ra02Lora::write_reg(uint8_t reg, uint8_t val) { /* váš kód */ }
-uint8_t Ra02Lora::read_reg(uint8_t reg) { /* váš kód */ }
-void Ra02Lora::dump_config() { /* váš kód */ }
+// ================= SEND =================
+void Ra02Lora::send_packet(std::vector<uint8_t> data) {
+    this->state_ = STATE_TX;
+    this->tx_started_ = millis();
+
+    this->write_reg(0x01, 0x81);
+
+    this->write_reg(0x0E, 0x80);
+    this->write_reg(0x0D, 0x80);
+
+    this->enable();
+    this->transfer_byte(0x80);
+    for (auto b : data)
+        this->transfer_byte(b);
+    this->disable();
+
+    this->write_reg(0x22, data.size());
+
+    this->write_reg(0x40, 0x40); // TX_DONE
+    this->write_reg(0x01, 0x83);
+
+    ESP_LOGI(TAG, "TX start");
+}
+
+// ================= CAD =================
+void Ra02Lora::start_cad() {
+    ESP_LOGD(TAG, "Start CAD");
+
+    this->cad_running_ = true;
+
+    this->write_reg(0x40, 0x80); // DIO0 = CAD_DONE
+    this->write_reg(0x01, 0x87); // CAD mode
+}
+
+// ================= SPI =================
+void Ra02Lora::write_reg(uint8_t reg, uint8_t val) {
+    this->enable();
+    this->transfer_byte(reg | 0x80);
+    this->transfer_byte(val);
+    this->disable();
+}
+
+uint8_t Ra02Lora::read_reg(uint8_t reg) {
+    this->enable();
+    this->transfer_byte(reg & 0x7F);
+    uint8_t val = this->transfer_byte(0x00);
+    this->disable();
+    return val;
+}
+
+void Ra02Lora::dump_config() {
+    ESP_LOGCONFIG(TAG, "RA02 LoRa FULL (ISR + watchdog + CAD)");
+}
 
 } // namespace
 } // namespace
