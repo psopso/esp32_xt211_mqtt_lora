@@ -1,4 +1,5 @@
 # lora_app/__init__.py
+import esphome.config_validation as cv
 import esphome.codegen as cg
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
