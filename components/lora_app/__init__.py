@@ -11,7 +11,7 @@ CONF_LORA_ID = "lora_id"
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
-Lora_App = lora_app_ns.class_('LoraApp', cg.Component)
+lora_app = lora_app_ns.class_('LoraApp', cg.Component)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
