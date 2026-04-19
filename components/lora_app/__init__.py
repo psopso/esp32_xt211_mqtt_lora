@@ -8,7 +8,7 @@ Lora_App = ra02_lora_ns.class_('LoraApp', cg.Component)
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(LoraApp),
-}).extend(cv.COMPONENT_SCHEMA))
+}).extend(cv.COMPONENT_SCHEMA)
 
 
 async def to_code(config):
