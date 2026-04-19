@@ -136,6 +136,7 @@ void Ra02Lora::loop() {
             
             // Místo tisknutí strčíme do fronty!
             this->rx_queue_.push(pkt);
+            ESP_LOGI(TAG, "rx_queue_.push");
         }
 
         // CAD done
