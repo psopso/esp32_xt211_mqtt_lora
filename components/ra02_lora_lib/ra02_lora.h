@@ -38,7 +38,6 @@ class Ra02Lora : public Component, public spi::SPIDevice<
   void set_dio0_pin(InternalGPIOPin *pin) { dio0_pin_ = pin; }
   void set_dio1_pin(InternalGPIOPin *pin) { dio1_pin_ = pin; }
 
-  void send_packet(std::vector<uint8_t> data);
   void start_cad();
 
   // --- NOVÉ ROZHRANÍ PRO APLIKACI ---
