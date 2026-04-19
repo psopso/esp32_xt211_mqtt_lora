@@ -3,7 +3,7 @@ import esphome.codegen as cg
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
-Lora_App = ra02_lora_ns.class_('LoraApp', cg.Component)
+Lora_App = lora_app_ns.class_('LoraApp', cg.Component)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
