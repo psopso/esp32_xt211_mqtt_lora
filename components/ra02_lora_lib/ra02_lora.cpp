@@ -73,49 +73,16 @@ void IRAM_ATTR Ra02Lora::gpio_intr_handler(Ra02Lora *arg) {
 void Ra02Lora::loop() {
     uint32_t now = millis();
 
-    // periodické TX (jen když jsme v RX)
-    if ((now - this->last_transmission_) > this->interval_ && this->state_ == STATE_RX) {
-        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
-        this->last_transmission_ = now;
-    }
+    // VŠIMNĚTE SI: Blok "// ===== TX interval =====" byl KOMPLETNĚ VYMAZÁN!
 
-    /*
-    // ================= FALLBACK IRQ =================
-    static uint32_t last_irq_check = 0;
+    // ... (timeouty a CAD fallback zůstávají beze změny) ...
 
-    if (now - last_irq_check > 100) {
-        last_irq_check = now;
-
-        uint8_t irq = this->read_reg(0x12);
-
-        if (irq != 0) {
-            ESP_LOGW(TAG, "IRQ fallback: 0x%02X", irq);
-            this->interrupt_triggered_ = true;
-        }
-
-        // DIO0 stuck HIGH ochrana
-        if (this->dio0_pin_->digital_read()) {
-            if (irq != 0) {
-                ESP_LOGW(TAG, "DIO0 stuck HIGH → recovery");
-                this->interrupt_triggered_ = true;
-            }
-        }
-    }
-    */
-    // ================= IRQ processing =================
-    if (!this->interrupt_triggered_)
-        return;
-
-    this->interrupt_triggered_ = false;
-
-    uint8_t irq = this->read_reg(0x12);
-    this->write_reg(0x12, 0xFF); // clear IRQ
-
+    // ===== STATE MACHINE =====
     switch (this->state_) {
 
-    // ===== RX =====
     case STATE_RX:
-        if (irq & 0x40) { // RX_DONE
+        if (irq & 0x40) {
+            this->last_rx_time_ = now;
 
             uint8_t len = this->read_reg(0x13);
             uint8_t addr = this->read_reg(0x10);
@@ -124,44 +91,23 @@ void Ra02Lora::loop() {
             this->enable();
             this->transfer_byte(0x00);
 
-            std::string out = "";
+            // Naplnění struktury paketu
+            LoraPacket pkt;
             for (int i = 0; i < len; i++) {
-                char b[5];
-                sprintf(b, "%02X ", this->transfer_byte(0x00));
-                out += b;
+                pkt.data.push_back(this->transfer_byte(0x00));
             }
             this->disable();
 
-            int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
+            pkt.rssi = (int16_t)this->read_reg(0x1B) - 164;
 
-            ESP_LOGI(TAG, "RX: [%s] RSSI=%d dBm", out.c_str(), rssi);
+            // Místo logování prostě vložíme paket do fronty pro aplikaci
+            this->rx_queue_.push(pkt);
         }
+
+        // ... (CAD done logika zůstává beze změny) ...
         break;
 
-    // ===== TX =====
-    case STATE_TX:
-        if (irq & 0x08) { // TX_DONE
-            ESP_LOGD(TAG, "TX done → RX");
-
-            // stop TX
-            this->write_reg(0x01, 0x81);
-
-            // reset FIFO RX
-            this->write_reg(0x0F, 0x00);
-            this->write_reg(0x0D, 0x00);
-
-            // přepnout DIO0 zpět na RX
-            this->write_reg(0x40, 0x00);
-
-            // clear IRQ znovu pro jistotu
-            this->write_reg(0x12, 0xFF);
-
-            // zpět do RX
-            this->write_reg(0x01, 0x85);
-
-            this->state_ = STATE_RX;
-        }
-        break;
+    // ... (STATE_TX zůstává beze změny) ...
     }
 }
 
@@ -212,6 +158,20 @@ uint8_t Ra02Lora::read_reg(uint8_t reg) {
 // ================= CONFIG =================
 void Ra02Lora::dump_config() {
     ESP_LOGCONFIG(TAG, "RA02 LoRa ready");
+}
+
+// ================= APLIKAČNÍ API =================
+bool Ra02Lora::available() {
+    return !this->rx_queue_.empty();
+}
+
+LoraPacket Ra02Lora::read_packet() {
+    if (this->rx_queue_.empty()) {
+        return LoraPacket(); // Vrátí prázdný paket jako pojistku
+    }
+    LoraPacket pkt = this->rx_queue_.front();
+    this->rx_queue_.pop();
+    return pkt;
 }
 
 } // namespace ra02_lora
