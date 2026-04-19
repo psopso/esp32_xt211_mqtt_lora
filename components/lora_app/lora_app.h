@@ -3,6 +3,8 @@
 #include "esphome/core/log.h"
 #include "ilora_driver.h" // Includujeme POUZE rozhraní
 
+static const char *const TAG = "lora_app";
+
 namespace esphome {
 namespace lora_app {
 
@@ -16,7 +18,7 @@ class LoraApp : public Component {
     // Věří, že dodaný objekt splňuje "smlouvu" ILoraDriver.
     while (this->driver_ != nullptr && this->driver_->available()) {
       auto pkt = this->driver_->read_packet();
-      ESP_LOGI("app", "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
+      ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
     }
   }
 
