@@ -1,6 +1,9 @@
 # lora_app/__init__.py
+
 import esphome.config_validation as cv
 import esphome.codegen as cg
+from esphome.const import CONF_ID
+
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
