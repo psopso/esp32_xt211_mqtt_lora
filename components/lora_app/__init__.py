@@ -3,6 +3,10 @@
 import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.const import CONF_ID
+# Tímto importem získáme přístup k definici driveru
+from .. import ra02_lora
+
+CONF_LORA_ID = "lora_id"
 
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
@@ -11,9 +15,10 @@ Lora_App = lora_app_ns.class_('LoraApp', cg.Component)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(Lora_App),
+    cv.GenerateID(): cv.declare_id(LoraApp),
+    # Vyžadujeme ID existující komponenty ra02_lora
+    cv.Required(CONF_LORA_ID): cv.use_id(ra02_lora.Ra02Lora),
 }).extend(cv.COMPONENT_SCHEMA)
-
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
