@@ -4,6 +4,9 @@
 #include <vector>
 #include <queue> // Přidáno pro frontu zpráv
 
+// Hardware si includuje definici rozhraní, aby ji mohl splnit
+#include "esphome/components/lora_app/ilora_driver.h"
+
 struct LoraPacket {
     std::vector<uint8_t> data;
     int16_t rssi;
@@ -17,11 +20,8 @@ enum LoraState {
     STATE_TX
 };
 
-class Ra02Lora : public Component, public spi::SPIDevice<
-    spi::BIT_ORDER_MSB_FIRST,
-    spi::CLOCK_POLARITY_LOW,
-    spi::CLOCK_PHASE_LEADING,
-    spi::DATA_RATE_1MHZ> {
+// Třída dědí z Component, SPIDevice a nově i z ILoraDriver
+class Ra02Lora : public Component, public spi::SPIDevice<...>, public ILoraDriver {
 
  public:
   void setup() override;
@@ -37,7 +37,8 @@ class Ra02Lora : public Component, public spi::SPIDevice<
 
   // --- NOVÉ ROZHRANÍ PRO APLIKACI ---
   bool available();
-  LoraPacket read_packet();
+  LoraPacket read_packet() override;
+  void send_packet(std::vector<uint8_t> data) override;
   // ----------------------------------
 
   // 🔥 ESP-IDF signatura zůstává!
