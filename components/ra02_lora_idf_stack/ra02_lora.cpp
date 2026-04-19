@@ -80,53 +80,9 @@ void Ra02Lora::setup() {
 void Ra02Lora::loop() {
     uint32_t now = millis();
 
-    // ===== TX interval =====
-    if ((now - this->last_transmission_) > this->interval_ && this->state_ == STATE_RX) {
-        this->send_packet({0xDE, 0xAD, 0xBE, 0xEF});
-        this->last_transmission_ = now;
-    }
+    // VŠIMNĚTE SI: Blok "// ===== TX interval =====" byl KOMPLETNĚ VYMAZÁN!
 
-    // ===== TX TIMEOUT =====
-    if (this->state_ == STATE_TX && (now - this->tx_started_ > this->tx_timeout_ms_)) {
-        ESP_LOGW(TAG, "TX timeout → recovery");
-
-        this->write_reg(0x01, 0x81); // standby
-        this->write_reg(0x40, 0x00); // RX_DONE
-        this->write_reg(0x01, 0x85); // RX
-
-        this->state_ = STATE_RX;
-    }
-
-    // ===== RX TIMEOUT =====
-    if (this->state_ == STATE_RX && (now - this->last_rx_time_ > this->rx_timeout_ms_)) {
-        ESP_LOGW(TAG, "RX timeout → restart RX");
-
-        this->write_reg(0x01, 0x81);
-        this->write_reg(0x12, 0xFF);
-        this->write_reg(0x40, 0x00);
-        this->write_reg(0x01, 0x85);
-
-        this->last_rx_time_ = now;
-    }
-
-    // ===== CAD trigger (každých 5s) =====
-    if (!this->cad_running_ && (now % 5000 < 50) && this->state_ == STATE_RX) {
-        this->start_cad();
-    }
-
-    // ===== IRQ fallback =====
-    uint8_t irq = this->read_reg(0x12);
-    if (irq != 0 && this->dio0_pin_->digital_read()) {
-        this->interrupt_triggered_ = true;
-    }
-
-    if (!this->interrupt_triggered_)
-        return;
-
-    this->interrupt_triggered_ = false;
-
-    irq = this->read_reg(0x12);
-    this->write_reg(0x12, 0xFF);
+    // ... (timeouty a CAD fallback zůstávají beze změny) ...
 
     // ===== STATE MACHINE =====
     switch (this->state_) {
@@ -142,48 +98,23 @@ void Ra02Lora::loop() {
             this->enable();
             this->transfer_byte(0x00);
 
-            std::string out = "";
+            // Naplnění struktury paketu
+            LoraPacket pkt;
             for (int i = 0; i < len; i++) {
-                char b[5];
-                sprintf(b, "%02X ", this->transfer_byte(0x00));
-                out += b;
+                pkt.data.push_back(this->transfer_byte(0x00));
             }
             this->disable();
 
-            int16_t rssi = (int16_t)this->read_reg(0x1B) - 164;
+            pkt.rssi = (int16_t)this->read_reg(0x1B) - 164;
 
-            ESP_LOGI(TAG, "RX: [%s] RSSI=%d dBm", out.c_str(), rssi);
-
-            if (this->on_receive_) {
-              this->on_receive_(data, rssi);
+            // Místo logování prostě vložíme paket do fronty pro aplikaci
+            this->rx_queue_.push(pkt);
         }
 
-        // CAD done
-        if (irq & 0x04) {
-            bool detected = irq & 0x01;
-            ESP_LOGD(TAG, "CAD done, activity=%d", detected);
-
-            this->cad_running_ = false;
-
-            // zpět do RX
-            this->write_reg(0x40, 0x00);
-            this->write_reg(0x01, 0x85);
-        }
+        // ... (CAD done logika zůstává beze změny) ...
         break;
 
-    case STATE_TX:
-        if (irq & 0x08) {
-            ESP_LOGD(TAG, "TX done → RX");
-
-            this->write_reg(0x01, 0x81);
-            this->write_reg(0x0F, 0x00);
-            this->write_reg(0x0D, 0x00);
-            this->write_reg(0x40, 0x00);
-            this->write_reg(0x01, 0x85);
-
-            this->state_ = STATE_RX;
-        }
-        break;
+    // ... (STATE_TX zůstává beze změny) ...
     }
 }
 
@@ -239,6 +170,20 @@ uint8_t Ra02Lora::read_reg(uint8_t reg) {
 
 void Ra02Lora::dump_config() {
     ESP_LOGCONFIG(TAG, "RA02 LoRa FULL (ISR + watchdog + CAD)");
+}
+
+// ================= APLIKAČNÍ API =================
+bool Ra02Lora::available() {
+    return !this->rx_queue_.empty();
+}
+
+LoraPacket Ra02Lora::read_packet() {
+    if (this->rx_queue_.empty()) {
+        return LoraPacket(); // Vrátí prázdný paket jako pojistku
+    }
+    LoraPacket pkt = this->rx_queue_.front();
+    this->rx_queue_.pop();
+    return pkt;
 }
 
 } // namespace

@@ -2,6 +2,7 @@
 #include "esphome/core/component.h"
 #include "esphome/components/spi/spi.h"
 #include <vector>
+#include <queue> // Přidáno pro aplikační frontu
 
 struct LoraPacket {
     std::vector<uint8_t> data;
@@ -29,41 +30,36 @@ class Ra02Lora : public Component, public spi::SPIDevice<
 
   void set_reset_pin(InternalGPIOPin *pin) { reset_pin_ = pin; }
   void set_dio0_pin(InternalGPIOPin *pin) { dio0_pin_ = pin; }
-  void set_dio1_pin(InternalGPIOPin *pin) { dio1_pin_ = pin; }
 
+  // --- NOVÉ APLIKAČNÍ ROZHRANÍ (API) ---
   void send_packet(std::vector<uint8_t> data);
-  void start_cad();
+  bool available();             // Zjistí, zda jsou k dispozici nová data
+  LoraPacket read_packet();     // Vyzvedne data z fronty
+  // ------------------------------------
 
-  // 🔥 změněná signatura
+  void start_cad();
   static void IRAM_ATTR gpio_intr_handler(void *arg);
 
  protected:
   InternalGPIOPin *reset_pin_;
   InternalGPIOPin *dio0_pin_;
-  InternalGPIOPin *dio1_pin_;
 
-  uint32_t last_transmission_{0};
-  uint32_t interval_{10000};
+  // --- APLIKAČNÍ FRONTA ---
+  std::queue<LoraPacket> rx_queue_;
 
-  // optional robustness
-  uint32_t last_irq_check_{0};
+  // Zbytek HW proměnných zůstává (state_, timeouty, cad_running_ atd.)
   uint32_t tx_started_{0};
   uint32_t tx_timeout_ms_{2000};
-
   uint32_t last_rx_time_{0};
   uint32_t rx_timeout_ms_{15000};
-
   bool cad_running_{false};
-  bool waiting_for_cad_{false};
 
   void write_reg(uint8_t reg, uint8_t val);
   uint8_t read_reg(uint8_t reg);
-
-  sstd::function<void(std::vector<uint8_t>, int16_t)> on_receive_;
 
   volatile bool interrupt_triggered_{false};
   volatile LoraState state_{STATE_RX};
 };
 
-} // namespace ra02_lora
-} // namespace esphome
+} 
+}
