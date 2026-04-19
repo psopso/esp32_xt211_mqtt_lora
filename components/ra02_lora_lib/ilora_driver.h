@@ -2,10 +2,10 @@
 #include <vector>
 #include <stdint.h>
 
-//struct LoraPacket {
-//    std::vector<uint8_t> data;
-//    int16_t rssi;
-//};
+struct LoraPacket {
+    std::vector<uint8_t> data;
+    int16_t rssi;
+};
 
 // Toto je naše rozhraní. "I" na začátku značí Interface.
 class ILoraDriver {

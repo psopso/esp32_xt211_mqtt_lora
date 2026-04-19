@@ -7,10 +7,10 @@
 // Hardware si includuje definici rozhraní, aby ji mohl splnit
 #include "ilora_driver.h"
 
-struct LoraPacket {
-    std::vector<uint8_t> data;
-    int16_t rssi;
-};
+//struct LoraPacket {
+//    std::vector<uint8_t> data;
+//    int16_t rssi;
+//};
 
 namespace esphome {
 namespace ra02_lora {
