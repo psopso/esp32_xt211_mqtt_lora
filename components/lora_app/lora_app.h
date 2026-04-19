@@ -1,7 +1,7 @@
 #pragma once
 #include "esphome/core/component.h"
 #include "esphome/core/log.h"
-#include "ilora_driver.h" // Includujeme POUZE rozhraní
+//#include "ilora_driver.h" // Includujeme POUZE rozhraní
 
 static const char *const TAG = "lora_app";
 
