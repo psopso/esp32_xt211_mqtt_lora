@@ -15,7 +15,7 @@ lora_app = lora_app_ns.class_('LoraApp', cg.Component)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(LoraApp),
+    cv.GenerateID(): cv.declare_id(lora_app),
     # Vyžadujeme ID existující komponenty ra02_lora
     cv.Required(CONF_LORA_ID): cv.use_id(ra02_lora.Ra02Lora),
 }).extend(cv.COMPONENT_SCHEMA)
