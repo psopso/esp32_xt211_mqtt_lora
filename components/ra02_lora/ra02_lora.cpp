@@ -38,7 +38,7 @@ void Ra02Lora::setup() {
 
     // Frequency 434 MHz
     this->write_reg(0x06, 0x6C);
-    this->write_reg(0x07, 0x80);
+    this->write_reg(0x07, 0x40);
     this->write_reg(0x08, 0x00);
 
     // TX power
@@ -46,7 +46,7 @@ void Ra02Lora::setup() {
 
     // Modem
     this->write_reg(0x1D, 0x72);
-    this->write_reg(0x1E, 0x74);
+    this->write_reg(0x1E, 0x70);
     this->write_reg(0x39, 0x12);
 
     // FIFO base
