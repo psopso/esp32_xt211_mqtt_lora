@@ -88,14 +88,14 @@ void Ra02Lora::loop() {
         uint8_t irq = this->read_reg(0x12);
 
         if (irq != 0) {
-            ESP_LOGW(TAG, "IRQ fallback: 0x%02X", irq);
+//            ESP_LOGW(TAG, "IRQ fallback: 0x%02X", irq);
             this->interrupt_triggered_ = true;
         }
 
         // DIO0 stuck HIGH ochrana
         if (this->dio0_pin_->digital_read()) {
             if (irq != 0) {
-                ESP_LOGW(TAG, "DIO0 stuck HIGH → recovery");
+//                ESP_LOGW(TAG, "DIO0 stuck HIGH → recovery");
                 this->interrupt_triggered_ = true;
             }
         }
@@ -140,7 +140,7 @@ void Ra02Lora::loop() {
     // ===== TX =====
     case STATE_TX:
         if (irq & 0x08) { // TX_DONE
-            ESP_LOGD(TAG, "TX done → RX");
+//            ESP_LOGD(TAG, "TX done → RX");
 
             // stop TX
             this->write_reg(0x01, 0x81);
@@ -189,7 +189,7 @@ void Ra02Lora::send_packet(std::vector<uint8_t> data) {
     // start TX
     this->write_reg(0x01, 0x83);
 
-    ESP_LOGI(TAG, "TX start");
+//    ESP_LOGI(TAG, "TX start");
 }
 
 // ================= SPI =================
