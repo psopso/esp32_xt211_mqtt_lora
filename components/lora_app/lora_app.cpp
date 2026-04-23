@@ -2,6 +2,8 @@
 #include "esphome/core/log.h"
 #include <vector>
 
+void process_incoming_packet(LoraPacket pkt);
+
 namespace esphome {
 namespace lora_app {
 
@@ -19,7 +21,9 @@ void LoraApp::loop() {
   while (this->driver_ != nullptr && this->driver_->available()) {
     auto pkt = this->driver_->read_packet();
     ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
-    
+
+    //Dekodovani paketu
+    process_incoming_packet(pkt);
     // Naplánování neblokujícího čekání
     // Identifikátor "test_reply" zajistí, že se časovač při dalším paketu přepíše.
     this->set_timeout("test_reply", 2000, [this]() {
