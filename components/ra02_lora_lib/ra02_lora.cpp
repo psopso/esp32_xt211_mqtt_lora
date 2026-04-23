@@ -134,7 +134,8 @@ void Ra02Lora::loop() {
             this->disable();
 
             pkt.rssi = (int16_t)this->read_reg(0x1B) - 164;
-            
+            ESP_LOGD(TAG, "RX RSSI: %d", pkt.rssi);
+
             // Místo tisknutí strčíme do fronty!
             this->rx_queue_.push(pkt);
             ESP_LOGI(TAG, "rx_queue_.push");
