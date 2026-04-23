@@ -76,25 +76,26 @@ void Ra02Lora::loop() {
 
     // ODSTRANĚN BLOK TX INTERVAL - to už bude dělat aplikace!
 
-    // ===== TX TIMEOUT =====
+// ===== TIMEOUTY =====
     if (this->state_ == STATE_TX && (now - this->tx_started_ > this->tx_timeout_ms_)) {
-        ESP_LOGW(TAG, "TX timeout → recovery");
-        this->write_reg(0x01, 0x81); // standby
-        this->write_reg(0x40, 0x00); // RX_DONE
-        this->write_reg(0x01, 0x85); // RX
+        ESP_LOGW(TAG, "TX timeout -> vynuceny navrat do RX");
+        this->write_reg(0x01, 0x81); // Standby
+        this->write_reg(0x12, 0xFF); // Vycisteni zablokovanych IRQ
+        this->write_reg(0x40, 0x00); // DIO0 = RX_DONE
+        this->write_reg(0x01, 0x85); // RX continuous
+        
         this->state_ = STATE_RX;
+        this->last_rx_time_ = now;   // OPRAVA: Musime vynulovat casovac!
     }
-
-    // ===== RX TIMEOUT =====
-    if (this->state_ == STATE_RX && (now - this->last_rx_time_ > this->rx_timeout_ms_)) {
-        ESP_LOGD(TAG, "RX timeout → restart RX");
+    else if (this->state_ == STATE_RX && (now - this->last_rx_time_ > this->rx_timeout_ms_)) {
+        // Zde pouzivame 'else if', aby nedoslo ke kaskadovemu spusteni
+        ESP_LOGD(TAG, "RX timeout -> cisteni a restart RX");
         this->write_reg(0x01, 0x81);
         this->write_reg(0x12, 0xFF);
         this->write_reg(0x40, 0x00);
         this->write_reg(0x01, 0x85);
         this->last_rx_time_ = now;
     }
-
     // ===== CAD trigger =====
     if (!this->cad_running_ && (now % 5000 < 50) && this->state_ == STATE_RX) {
         this->start_cad();
