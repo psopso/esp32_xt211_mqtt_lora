@@ -28,7 +28,7 @@ class LoraApp : public Component {
         
         // Pošleme jednoduchý payload (např. text "PONG")
         std::vector<uint8_t> response = {0x50, 0x4F, 0x4E, 0x47};
-//        this->driver_->send_packet(response);
+        this->driver_->send_packet(response);
       });
     }
   }
