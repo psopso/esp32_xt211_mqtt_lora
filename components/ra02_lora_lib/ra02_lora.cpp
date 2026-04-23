@@ -53,7 +53,7 @@ void Ra02Lora::setup() {
     delay(10);
     this->write_reg(0x01, 0x81);
     this->write_reg(0x06, 0x6C);
-    this->write_reg(0x07, 0x80);
+    this->write_reg(0x07, 0x40);
     this->write_reg(0x08, 0x00);
     this->write_reg(0x09, 0x8F);
     this->write_reg(0x1D, 0x72);
@@ -87,7 +87,7 @@ void Ra02Lora::loop() {
 
     // ===== RX TIMEOUT =====
     if (this->state_ == STATE_RX && (now - this->last_rx_time_ > this->rx_timeout_ms_)) {
-        ESP_LOGW(TAG, "RX timeout → restart RX");
+        ESP_LOGD(TAG, "RX timeout → restart RX");
         this->write_reg(0x01, 0x81);
         this->write_reg(0x12, 0xFF);
         this->write_reg(0x40, 0x00);

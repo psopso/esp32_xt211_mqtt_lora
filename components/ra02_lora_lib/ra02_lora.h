@@ -66,7 +66,7 @@ class Ra02Lora : public Component, public spi::SPIDevice<
   uint32_t tx_timeout_ms_{2000};
 
   uint32_t last_rx_time_{0};
-  uint32_t rx_timeout_ms_{15000};
+  uint32_t rx_timeout_ms_{50000};
 
   bool cad_running_{false};
   bool waiting_for_cad_{false};
