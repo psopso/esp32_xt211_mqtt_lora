@@ -5,7 +5,7 @@
 #include <queue> // Přidáno pro frontu zpráv
 
 // Hardware si includuje definici rozhraní, aby ji mohl splnit
-#include "esphome/components/lora_app/ilora_driver.h"
+#include "esphome/components/xt211_lora_mqtt/ilora_driver.h"
 //#include "ilora_driver.h"
 
 //struct LoraPacket {
