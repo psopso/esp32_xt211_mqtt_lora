@@ -39,6 +39,16 @@ void LoRaMqttGateway::loop() {
 } // namespace lora_app
 } // namespace esphome
 
+// Pomocná funkce pro zpětný překlad kódu na text
+    std::string get_state_string(uint8_t code) {
+        switch(code) {
+            case 0: return "OK";
+            case 1: return "SLEEP";
+            case 99: return "ERROR";
+            default: return "UNKNOWN";
+        }
+    }
+
 void process_incoming_packet(const std::vector<uint8_t>& data) {
 
         // 1. Ochrana proti podtečení paměti (velikost hlavičky)
