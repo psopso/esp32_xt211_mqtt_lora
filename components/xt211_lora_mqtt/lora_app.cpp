@@ -51,7 +51,7 @@ void process_incoming_packet(LoraPacket pkt) {
     const lora_data_payload_t *payload = reinterpret_cast<const lora_data_payload_t *>(pkt.data.data());
 
     // 3. Validace sítě a obsahu
-    if (payload->network_id != 0xA1B2) { // Vaše ID sítě
+    if (payload->network_id != MY_SECRET_NETWORK_ID /*0xA1B2*/) { // Vaše ID sítě
         ESP_LOGW("DECODE", "Neznámé Network ID: 0x%04X", payload->network_id);
         return;
     }

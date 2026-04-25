@@ -3,6 +3,10 @@
 //#include "esphome/components/lora_common/ilora_driver.h"
 #include "esphome/components/ra02_lora_lib/ilora_driver.h"
 
+#define MY_SECRET_NETWORK_ID 0xA1B2 // Vymyslete si jakékoliv 16bitové číslo
+#define SENDER_ID_METER      0x01   // ID vašeho elektroměru
+#define SENDER_ID_GATEWAY    0x02   // ID brány
+
 namespace esphome {
 namespace lora_app {
 
