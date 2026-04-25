@@ -39,7 +39,7 @@ void LoRaMqttGateway::loop() {
 } // namespace lora_app
 } // namespace esphome
 
-void process_incoming_packet(LoraPacket packed) {
+void process_incoming_packet(LoraPacket packet) {
     // 1. Základní kontrola velikosti (aby nedošlo k přístupu mimo paměť)
     // Minimální velikost je hlavička (5 bytů)
     if (packet.data.size() < 5) {
