@@ -74,11 +74,17 @@ void LoRaMqttGateway::loop() {
                 
                 for (int i = 0; i < packet->item_count; i++) {
                     const lora_queue_item_t &item = packet->payload.items[i];
-                    
+                    //item.timestamp
+
+		    time_t ts = item.timestamp;
+		    struct tm *utc = gmtime(&ts);
+		    char buffer[20];
+		    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", utc);
+
                     // Dekomprese dat (zpet na desetinná čísla, pokud to HA vyžaduje)
                     float total_kwh = item.obis_1_8_0_Wh / 1000.0f;
                     
-                    ESP_LOGD("LORA_RX", "Zaznam %d: %f kWh %f kWh %f kWh", i, item.obis_1_8_0_Wh / 1000.0f, item.obis_1_8_1_Wh / 1000.0f, item.obis_1_8_2_Wh / 1000.0f);
+                    ESP_LOGD("LORA_RX", "Zaznam %d: %s %f kWh %f kWh %f kWh", i, buffer, item.obis_1_8_0_Wh / 1000.0f, item.obis_1_8_1_Wh / 1000.0f, item.obis_1_8_2_Wh / 1000.0f);
                     
                     // id(sensor_total_kwh).publish_state(total_kwh);
                 }
