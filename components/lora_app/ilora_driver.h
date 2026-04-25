@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LORADRIVER
-#define LORADRIVER
+#ifndef ESPHOME_RA02_LORA_DRIVER_H
+#define ESPHOME_RA02_LORA_DRIVER_H
 #include <vector>
 #include <stdint.h>
 
