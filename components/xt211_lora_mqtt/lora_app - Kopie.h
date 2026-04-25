@@ -10,37 +10,6 @@
 namespace esphome {
 namespace lora_app {
 
-class LoRaMqttGateway : public Component { // Obyčejný Component je "rychlejší"
-public:
-
-    void setup() override {
-        // Inicializace rádia (jednorázově)
-        custom_lora_init();
-    }
-
-    void loop() override {
-        // Tato metoda běží "pořád dokola" v hlavní smyčce ESPHome
-        
-        // 1. Zeptáme se nízkoúrovňového ovladače, jestli rádio něco slyšelo
-        if (custom_lora_has_packet()) { 
-            
-            std::vector<uint8_t> buffer;
-            // 2. Pokud ano, vyčteme to do bufferu
-            if (custom_lora_read_packet(buffer)) {
-                
-                // 3. A TADY zavoláme naši zpracovatelskou funkci
-                this->on_packet_received(buffer);
-            }
-        }
-    }
-
-    void on_packet_received(const std::vector<uint8_t>& data) {
-        // Tady už probíhá ta dekomprese a MQTT odesílání,
-        // o které jsme mluvili minule.
-    }
-};
-
-
 class LoraApp : public Component {
  public:
   // Metoda pro předání (bind) driveru zvenčí
