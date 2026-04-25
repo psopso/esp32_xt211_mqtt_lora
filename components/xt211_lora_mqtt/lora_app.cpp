@@ -98,8 +98,8 @@ void LoRaMqttGateway::loop() {
                 float drift_sec = status.ntp_drift_ms / 1000.0f;
                 float batt_v = status.batt_voltage_mv / 1000.0f;
 
-                ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %d, Baterie: %.2f V", 
-                         state_text.c_str(), status.boot_count, batt_v);
+                ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %d, Baterie: %.2f V Wakeupcount: %d AdaptiveOffset: %d", 
+                         state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
 
                 // Zde publikujeme do text_sensor a sensor komponent v ESPHome
                 // id(status_text_sensor).publish_state(state_text);
