@@ -11,11 +11,11 @@ namespace lora_app {
 // pokud byste lora_app.h includoval na více místech.
 static const char *const TAG = "lora_app";
 
-void LoraApp::set_lora_driver(ILoraDriver *driver) {
+void LoRaMqttGateway::set_lora_driver(ILoraDriver *driver) {
   this->driver_ = driver;
 }
 
-void LoraApp::loop() {
+void LoRaMqttGateway::loop() {
   // Aplikaci je úplně jedno, jaký hardware pod tím běží. 
   // Věří, že dodaný objekt splňuje "smlouvu" ILoraDriver.
   while (this->driver_ != nullptr && this->driver_->available()) {

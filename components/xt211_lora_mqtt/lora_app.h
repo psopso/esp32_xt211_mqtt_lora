@@ -10,7 +10,7 @@
 namespace esphome {
 namespace lora_app {
 
-class LoraApp : public Component {
+class LoRaMqttGateway : public Component {
  public:
   // Metoda pro předání (bind) driveru zvenčí
   void set_lora_driver(ILoraDriver *driver);
