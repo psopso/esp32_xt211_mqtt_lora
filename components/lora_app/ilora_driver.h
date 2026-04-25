@@ -19,4 +19,4 @@ class ILoraDriver {
   virtual LoraPacket read_packet() = 0;
   virtual void send_packet(std::vector<uint8_t> data) = 0;
 };
-#ENDIF
+#endif
