@@ -7,6 +7,12 @@
 #define SENDER_ID_METER      0x01   // ID vašeho elektroměru
 #define SENDER_ID_GATEWAY    0x02   // ID brány
 
+typedef enum {
+    MSG_TYPE_METER_DATA, 
+    MSG_TYPE_STATUS,     
+    MSG_TYPE_BATTERY     
+} comm_msg_type_t;
+
 // 1. Zkomprimovaný JEDEN záznam pro LoRa
 #pragma pack(push, 1)
 typedef struct {
