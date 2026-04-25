@@ -7,7 +7,8 @@
 // Hardware si includuje definici rozhraní, aby ji mohl splnit
 //#include "esphome/components/xt211_lora_mqtt/ilora_driver.h"
 //#include "ilora_driver.h"
-
+#include "esphome/components/lora_common/ilora_driver.h"
+s
 //struct LoraPacket {
 //    std::vector<uint8_t> data;
 //    int16_t rssi;
