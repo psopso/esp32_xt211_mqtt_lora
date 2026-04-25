@@ -1,6 +1,5 @@
 #pragma once
-#ifndef ESPHOME_RA02_LORA_DRIVER_H
-#define ESPHOME_RA02_LORA_DRIVER_H
+
 #include <vector>
 #include <stdint.h>
 
@@ -19,4 +18,3 @@ class ILoraDriver {
   virtual LoraPacket read_packet() = 0;
   virtual void send_packet(std::vector<uint8_t> data) = 0;
 };
-#endif
