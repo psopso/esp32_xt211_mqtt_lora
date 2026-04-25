@@ -56,28 +56,52 @@ void process_incoming_packet(LoraPacket pkt) {
         return;
     }
 
-    // 4. Bezpečnostní kontrola počtu položek
-    if (payload->item_count > LORA_MAX_ITEMS_PER_PACKET) {
-        ESP_LOGE("DECODE", "Neplatný počet položek: %d", payload->item_count);
-        return;
-    }
+        // 4. Rozvětvení podle typu zprávy
+        switch (packet->packet_type) {
+            
+            case MSG_TYPE_METER_DATA: {
+                ESP_LOGI("LORA_RX", "Prijata DATA (polozek: %d)", packet->item_count);
+                
+                for (int i = 0; i < packet->item_count; i++) {
+                    const lora_queue_item_t &item = packet->payload.items[i];
+                    
+                    // Dekomprese dat (zpet na desetinná čísla, pokud to HA vyžaduje)
+                    float total_kwh = item.obis_1_8_0_Wh / 1000.0f;
+                    
+                    ESP_LOGD("LORA_RX", "Zaznam %d: %f kWh", i, total_kwh);
+                    
+                    // id(sensor_total_kwh).publish_state(total_kwh);
+                }
+                break;
+            }
 
-    // 5. Čtení dat
-    ESP_LOGI("DECODE", "Přijat paket od ID: %d, typ: %d, položek: %d", 
-             payload->sender_id, payload->packet_type, payload->item_count);
+            case MSG_TYPE_STATUS: {
+                ESP_LOGI("LORA_RX", "Prijat STATUS");
+                
+                // Přistupujeme do paměti přes větvičku .status v našem unionu!
+                const lora_status_item_t &status = packet->payload.status;
 
-    for (int i = 0; i < payload->item_count; i++) {
-        const lora_queue_item_t &item = payload->items[i];
-        
-        ESP_LOGI("DECODE", "  [%d] Čas: %u, Celkem: %u Wh, T1: %u Wh, T2: %u Wh, Restart: %s",
-                 i, 
-                 item.timestamp, 
-                 item.obis_1_8_0_Wh, 
-                 item.obis_1_8_1_Wh, 
-                 item.obis_1_8_2_Wh,
-                 item.first_after_restart ? "ANO" : "NE");
-        
-        // Zde můžete data poslat do sensorů v ESPHome:
-        // id(my_sensor).publish_state(item.obis_1_8_0_Wh);
-    }
+                // Překlad stavu zpět na text
+                std::string state_text = get_state_string(status.state_code);
+                
+                // Přepočet driftu a napětí zpět z celých čísel na desetinná
+                float drift_sec = status.ntp_drift_ms / 1000.0f;
+                float batt_v = status.batt_voltage_mv / 1000.0f;
+
+                ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %d, Baterie: %.2f V", 
+                         state_text.c_str(), status.boot_count, batt_v);
+
+                // Zde publikujeme do text_sensor a sensor komponent v ESPHome
+                // id(status_text_sensor).publish_state(state_text);
+                // id(boot_count_sensor).publish_state(status.boot_count);
+                // id(battery_v_sensor).publish_state(batt_v);
+                break;
+            }
+
+            default:
+                ESP_LOGW("LORA_RX", "Neznamy typ paketu: %d", packet->packet_type);
+                break;
+        }
+
+
 }
