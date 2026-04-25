@@ -39,16 +39,16 @@ void LoRaMqttGateway::loop() {
 } // namespace lora_app
 } // namespace esphome
 
-void process_incoming_packet(LoraPacket pkt) {
+void process_incoming_packet(LoraPacket packed) {
     // 1. Základní kontrola velikosti (aby nedošlo k přístupu mimo paměť)
     // Minimální velikost je hlavička (5 bytů)
-    if (pkt.data.size() < 5) {
+    if (packet.data.size() < 5) {
         ESP_LOGW("DECODE", "Paket je příliš krátký!");
         return;
     }
 
     // 2. Přetypování bufferu na ukazatel na naši strukturu
-    const lora_data_payload_t *payload = reinterpret_cast<const lora_data_payload_t *>(pkt.data.data());
+    const lora_data_payload_t *payload = reinterpret_cast<const lora_data_payload_t *>(packet.data.data());
 
     // 3. Validace sítě a obsahu
     if (payload->network_id != MY_SECRET_NETWORK_ID /*0xA1B2*/) { // Vaše ID sítě
