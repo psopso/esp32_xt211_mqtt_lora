@@ -39,22 +39,22 @@ void LoRaMqttGateway::loop() {
 } // namespace lora_app
 } // namespace esphome
 
-void process_incoming_packet(LoraPacket packet) {
-    // 1. Základní kontrola velikosti (aby nedošlo k přístupu mimo paměť)
-    // Minimální velikost je hlavička (5 bytů)
-    if (packet.data.size() < 5) {
-        ESP_LOGW("DECODE", "Paket je příliš krátký!");
-        return;
-    }
+void process_incoming_packet(const std::vector<uint8_t>& data) {
 
-    // 2. Přetypování bufferu na ukazatel na naši strukturu
-    const lora_data_payload_t *payload = reinterpret_cast<const lora_data_payload_t *>(packet.data.data());
+        // 1. Ochrana proti podtečení paměti (velikost hlavičky)
+        if (data.size() < 5) {
+            ESP_LOGW("LORA_RX", "Paket je prilis kratky!");
+            return;
+        }
 
-    // 3. Validace sítě a obsahu
-    if (payload->network_id != MY_SECRET_NETWORK_ID /*0xA1B2*/) { // Vaše ID sítě
-        ESP_LOGW("DECODE", "Neznámé Network ID: 0x%04X", payload->network_id);
-        return;
-    }
+        // 2. Přetypování přijatých bytů na naši strukturu
+        const lora_universal_packet_t *packet = reinterpret_cast<const lora_universal_packet_t *>(data.data());
+
+        // 3. Bezpečnostní kontrola sítě
+        if (packet->network_id != 0xA1B2) {
+            ESP_LOGW("LORA_RX", "Cizi paket ignorovan (NetID: 0x%04X)", packet->network_id);
+            return;
+        }
 
         // 4. Rozvětvení podle typu zprávy
         switch (packet->packet_type) {
@@ -102,6 +102,6 @@ void process_incoming_packet(LoraPacket packet) {
                 ESP_LOGW("LORA_RX", "Neznamy typ paketu: %d", packet->packet_type);
                 break;
         }
-
+  
 
 }
