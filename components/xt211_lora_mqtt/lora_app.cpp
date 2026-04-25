@@ -49,7 +49,7 @@ void LoRaMqttGateway::loop() {
         }
     }
 
-void process_incoming_packet(const std::vector<uint8_t>& data) {
+    void process_incoming_packet(const std::vector<uint8_t>& data) {
 
         // 1. Ochrana proti podtečení paměti (velikost hlavičky)
         if (data.size() < 5) {
@@ -78,7 +78,7 @@ void process_incoming_packet(const std::vector<uint8_t>& data) {
                     // Dekomprese dat (zpet na desetinná čísla, pokud to HA vyžaduje)
                     float total_kwh = item.obis_1_8_0_Wh / 1000.0f;
                     
-                    ESP_LOGD("LORA_RX", "Zaznam %d: %f kWh", i, total_kwh);
+                    ESP_LOGD("LORA_RX", "Zaznam %d: %f kWh %f kWh %f kWh", i, item.obis_1_8_0_Wh / 1000.0f, item.obis_1_8_1_Wh / 1000.0f, item.obis_1_8_2_Wh / 1000.0f);
                     
                     // id(sensor_total_kwh).publish_state(total_kwh);
                 }
@@ -112,6 +112,4 @@ void process_incoming_packet(const std::vector<uint8_t>& data) {
                 ESP_LOGW("LORA_RX", "Neznamy typ paketu: %d", packet->packet_type);
                 break;
         }
-  
-
-}
+    }
