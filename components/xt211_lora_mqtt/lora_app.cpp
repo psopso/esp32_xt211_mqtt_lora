@@ -2,7 +2,7 @@
 #include "esphome/core/log.h"
 #include <vector>
 
-void process_incoming_packet(LoraPacket pkt);
+void process_incoming_packet(const std::vector<uint8_t>& data);
 
 namespace esphome {
 namespace lora_app {
