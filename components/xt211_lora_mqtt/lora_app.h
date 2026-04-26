@@ -90,3 +90,14 @@ class LoRaMqttGateway : public Component {
 
 } // namespace lora_app
 } // namespace esphome
+
+
+//    cJSON *resp = cJSON_CreateObject();
+//    cJSON_AddStringToObject(resp, "status", "ok");
+//    char *rendered = cJSON_PrintUnformatted(resp);
+    
+//    ESP_LOGD("custom", "JSON výstup: %s", rendered);
+
+    // DŮLEŽITÉ: Uvolnění paměti pro objekt i vygenerovaný string
+//    cJSON_free(rendered);
+//    cJSON_Delete(resp);

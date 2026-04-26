@@ -1,0 +1,69 @@
+#include "esphome.h"
+#include "esphome/components/mqtt/mqtt_client.h"
+#include <cJSON.h> // ESP-IDF cJSON knihovna
+
+class LoRaMqttGateway : public Component {
+public:
+    void on_packet_received(const std::vector<uint8_t>& data) {
+        // ... (kontrola paketu jako minule) ...
+        const lora_universal_packet_t *packet = reinterpret_cast<const lora_universal_packet_t *>(data.data());
+        
+        if (packet->packet_type == MSG_TYPE_STATUS) {
+            publish_status_with_cjson(packet->payload.status, packet->sender_id);
+        }
+    }
+
+private:
+    void publish_status_with_cjson(const lora_status_item_t &status, uint8_t sender_id) {
+        // 1. Vytvoření kořenového JSON objektu
+        cJSON *root = cJSON_CreateObject();
+        if (root == NULL) {
+            ESP_LOGE("LORA_MQTT", "Chyba alokace pameti pro cJSON kořen!");
+            return; // Ochrana proti pádu
+        }
+
+        // 2. Naplnění daty (cJSON funkce podle typu dat)
+        // String musíme předat jako const char*
+        cJSON_AddStringToObject(root, "state", get_state_string(status.state_code).c_str());
+        
+        // Čísla (jak int, tak float používají stejnou funkci)
+        cJSON_AddNumberToObject(root, "boot_count", status.boot_count);
+        cJSON_AddNumberToObject(root, "wakeup_count", status.wakeup_cycle_count);
+        cJSON_AddNumberToObject(root, "rssi", status.rssi);
+        
+        // Přepočet z naší komprimované verze
+        cJSON_AddNumberToObject(root, "batt_v", status.batt_voltage_mv / 1000.0);
+        cJSON_AddNumberToObject(root, "drift", status.ntp_drift_ms / 1000.0);
+
+        // 3. Vygenerování textového řetězce
+        // Používáme Unformatted, aby payload neměl zbytečné mezery a odřádkování (šetří pásmo)
+        char *json_string = cJSON_PrintUnformatted(root);
+
+        if (json_string != NULL) {
+            // 4. Sestavení MQTT topicu
+            std::string topic = "meter/" + std::to_string(sender_id) + "/status";
+
+            // 5. Odeslání do MQTT
+            // ESPHome publish akceptuje std::string, takže dojde k automatické konverzi z char*
+            mqtt::global_mqtt_client->publish(topic, json_string);
+
+            ESP_LOGI("LORA_MQTT", "Odeslano: %s", json_string);
+
+            // 6. ÚKLID PAMĚTI PRO TEXTOVÝ ŘETĚZEC (KRITICKÉ!)
+            // cJSON_Print alokuje novou paměť pro textový výstup, musíme ji uvolnit standardním C příkazem free()
+            free(json_string);
+        } else {
+            ESP_LOGE("LORA_MQTT", "Chyba pri generovani textu z cJSON");
+        }
+
+        // 7. ÚKLID PAMĚTI PRO JSON OBJEKT (KRITICKÉ!)
+        // Tímto se z paměti smaže root a automaticky i všechny vložené hodnoty
+        cJSON_Delete(root);
+    }
+
+    std::string get_state_string(uint8_t code) {
+        if (code == 0) return "OK";
+        if (code == 1) return "SLEEP";
+        return "UNKNOWN";
+    }
+};
