@@ -6,6 +6,9 @@ from esphome.const import CONF_ID
 # Tímto importem získáme přístup k definici driveru
 from .. import ra02_lora_lib
 
+# Toto zajistí přidání cJSON do sestavení
+cg.add_library("cjson", None) 
+
 CONF_LORA_ID = "lora_id"
 
 # ... (standardní importy) ...
