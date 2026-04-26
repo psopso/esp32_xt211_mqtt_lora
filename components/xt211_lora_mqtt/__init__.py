@@ -6,8 +6,6 @@ from esphome.const import CONF_ID
 # Tímto importem získáme přístup k definici driveru
 from .. import ra02_lora_lib
 
-DEPENDENCIES = ['mqtt']
-
 CONF_LORA_ID = "lora_id"
 
 # ... (standardní importy) ...
