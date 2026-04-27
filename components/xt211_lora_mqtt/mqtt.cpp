@@ -1,6 +1,8 @@
 #include "esphome/core/log.h"
 #include <memory> // Nutné pro std::unique_ptr
 #include <cstdlib> // Nutné pro free()
+#include "esphome/components/mqtt/mqtt_client.h"
+#include "cJSON.h"
 
 static const char *const TAG = "mqtt";
 
