@@ -67,3 +67,36 @@ private:
         return "UNKNOWN";
     }
 };
+
+
+Další verze:
+#include <memory> // Nutné pro std::unique_ptr
+#include <cstdlib> // Nutné pro free()
+
+// ... uvnitř vaší funkce ...
+
+// 1. Vytvoříme root a řekneme C++, ať ho při zániku smaže pomocí cJSON_Delete
+std::unique_ptr<cJSON, decltype(&cJSON_Delete)> root(cJSON_CreateObject(), cJSON_Delete);
+
+if (!root) {
+    ESP_LOGE("LORA", "Malo pameti pro JSON");
+    return; // Pokud dojde paměť, prostě vyskočíme. Žádný únik nehrozí.
+}
+
+// Přidání dat (používáme root.get() pro získání surového C ukazatele)
+cJSON_AddStringToObject(root.get(), "state", "OK");
+cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
+
+// 2. Vygenerujeme text a řekneme C++, ať ho při zániku smaže pomocí free()
+std::unique_ptr<char, decltype(&free)> json_string(cJSON_PrintUnformatted(root.get()), free);
+
+if (!json_string) {
+    ESP_LOGE("LORA", "Chyba generovani textu");
+    return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
+}
+
+// 3. Odeslání
+mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
+
+// Konec funkce. 
+// Zde se neviditelně a automaticky zavolá free(json_string) a cJSON_Delete(root).
