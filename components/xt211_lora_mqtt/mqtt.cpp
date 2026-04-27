@@ -27,7 +27,16 @@ static const char *const TAG = "mqtt";
       ESP_LOGE("LORA", "Malo pameti pro JSON");
       return; // Pokud dojde paměť, prostě vyskočíme. Žádný únik nehrozí.
     }
-     
+//elektromertest/data {"datetime":"Sun Apr 26 16:49:55 2026","data":{"reading_datetime":"Sun 2026-04-26 16:40:22 //GMT","first_boot":false,"values":{"1.8.0":443.451,"1.8.1":83.769,"1.8.2":359.682,"1.8.3":0,"1.8.4":0,"96.1.1":"5100025085"}}}    
+
+    //cJSON_AddStringToObject(root.get(), "state", "OK");
+    //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
+
+    //cJSON *podObjekt = cJSON_CreateObject();  //vytvorim data
+    std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> data(cJSON_CreateObject(), verbose_cjson_delete);
+    cJSON_AddItemToObject(root, "data", data);
+    
+
     //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
     esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", "Testovaci zprava do mqtt");
     //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);

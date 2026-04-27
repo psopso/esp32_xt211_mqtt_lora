@@ -100,3 +100,11 @@ mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
 
 // Konec funkce. 
 // Zde se neviditelně a automaticky zavolá free(json_string) a cJSON_Delete(root).
+
+
+// 1. Vytvoření nového podobjektu
+cJSON *podObjekt = cJSON_CreateObject();
+cJSON_AddStringToObject(podObjekt, "detail", "data");
+
+// 2. Přidání podobjektu do hlavního objektu
+cJSON_AddItemToObject(root, "podObjekt", podObjekt);
