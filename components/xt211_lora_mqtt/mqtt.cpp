@@ -7,6 +7,13 @@
 
 static const char *const TAG = "mqtt";
 
+std::string get_timestamp_string(std::time_t ts) {
+    // Převod time_t na sys_time (bod v čase)
+    auto tp = std::chrono::system_clock::from_time_t(ts);
+    // Přímé formátování do stringu
+    return std::format("{:%a %Y-%m-%d %H:%M:%S GMT}", tp);
+}
+
 
   // Vytvoříme si vlastní mazací funkci pro textový řetězec
   auto verbose_free = [](char* ptr) {
