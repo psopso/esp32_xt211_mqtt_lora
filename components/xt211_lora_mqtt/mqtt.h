@@ -4,7 +4,7 @@
 namespace esphome {
 namespace lora_app {
 
-//void pokus(lora_status_item_t *item);
+  void pokus(lora_status_item_t *item);
 
 }
 }
