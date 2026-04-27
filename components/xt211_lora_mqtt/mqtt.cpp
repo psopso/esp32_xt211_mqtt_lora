@@ -7,8 +7,6 @@
 
 static const char *const TAG = "mqtt";
 
-namespace esphome {
-namespace lora_app {
 
   // Vytvoříme si vlastní mazací funkci pro textový řetězec
   auto verbose_free = [](char* ptr) {
@@ -33,5 +31,3 @@ namespace lora_app {
     //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
   }
 
- }
-}
