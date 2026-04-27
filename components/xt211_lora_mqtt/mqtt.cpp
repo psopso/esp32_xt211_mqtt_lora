@@ -27,7 +27,9 @@ static const char *const TAG = "mqtt";
       ESP_LOGE("LORA", "Malo pameti pro JSON");
       return; // Pokud dojde paměť, prostě vyskočíme. Žádný únik nehrozí.
     }
-
+     
+    //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
+    mqtt::global_mqtt_client->publish("elektromertest1/data", "Testovaci zprava do mqtt");
     //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
   }
 
