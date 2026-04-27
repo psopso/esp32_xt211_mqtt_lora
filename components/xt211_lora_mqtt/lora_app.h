@@ -1,5 +1,4 @@
 #pragma once
-#include "mqtt.h"
 
 #include "esphome/core/component.h"
 //#include "esphome/components/lora_common/ilora_driver.h"
@@ -74,6 +73,7 @@ typedef struct {
 } lora_universal_packet_t;
 #pragma pack(pop)
 
+#include "mqtt.h"
 
 namespace esphome {
 namespace lora_app {
