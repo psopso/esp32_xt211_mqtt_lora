@@ -3,6 +3,7 @@
 namespace esphome {
 namespace lora_app {
 
-void pokus();
+void pokus(lora_status_item_t *item)
+
 }
 }
