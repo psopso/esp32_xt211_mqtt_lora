@@ -37,6 +37,9 @@ static const char *const TAG = "mqtt";
     //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
 
     //cJSON *podObjekt = cJSON_CreateObject();  //vytvorim data
+    std::string dt = get_timestamp_string(item.timestamp);
+    cJSON_AddStringToObject(root.get(), "datetime", dt);
+
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> data(cJSON_CreateObject(), verbose_cjson_delete);
     cJSON_AddItemToObject(root.get(), "data", data.get());
     
@@ -45,10 +48,3 @@ static const char *const TAG = "mqtt";
     esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", "Testovaci zprava do mqtt");
     //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
   }
-
-std::string get_timestamp_string(std::time_t ts) {
-    // Převod time_t na sys_time (bod v čase)
-    auto tp = std::chrono::system_clock::from_time_t(ts);
-    // Přímé formátování do stringu
-    return std::format("{:%a %Y-%m-%d %H:%M:%S GMT}", tp);
-}
