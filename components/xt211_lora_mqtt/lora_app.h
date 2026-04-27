@@ -1,4 +1,6 @@
 #pragma once
+#include "mqtt.h"
+
 #include "esphome/core/component.h"
 //#include "esphome/components/lora_common/ilora_driver.h"
 #include "esphome/components/ra02_lora_lib/ilora_driver.h"
