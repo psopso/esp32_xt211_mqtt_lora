@@ -1,4 +1,5 @@
 #pragma once
+#include "lora_app.h"
 
 namespace esphome {
 namespace lora_app {

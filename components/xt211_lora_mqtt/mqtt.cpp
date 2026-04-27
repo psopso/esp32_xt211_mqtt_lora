@@ -3,7 +3,6 @@
 #include <cstdlib> // Nutné pro free()
 #include "esphome/components/mqtt/mqtt_client.h"
 #include "cJSON.h"
-#include "lora_app.h"
 
 static const char *const TAG = "mqtt";
 
