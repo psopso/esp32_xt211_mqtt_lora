@@ -9,10 +9,23 @@ static const char *const TAG = "mqtt";
 namespace esphome {
 namespace lora_app {
 
+  // Vytvoříme si vlastní mazací funkci pro textový řetězec
+  auto verbose_free = [](char* ptr) {
+      free(ptr);
+      ESP_LOGI("LORA", "--> Pamet pro JSON text byla uspesne smazana!");
+  };
+
+  // Vytvoříme si vlastní mazací funkci pro cJSON objekt
+  auto verbose_cjson_delete = [](cJSON* ptr) {
+      cJSON_Delete(ptr);
+      ESP_LOGI("LORA", "--> Pamet pro cJSON objekt byla uspesne smazana!");
+  };
+
   void pokus() {
     ESP_LOGI(TAG, "Pokus v mqtt");
-    std::unique_ptr<cJSON, decltype(&cJSON_Delete)> root(cJSON_CreateObject(), cJSON_Delete);
+    std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> root(cJSON_CreateObject(), verbose_cjson_delete);
     
+    //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
   }
 
  }
