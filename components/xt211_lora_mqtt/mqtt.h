@@ -1,4 +1,4 @@
 #pragma once
 #include "lora_app.h"
 
-  void pokus(const lora_queue_item_t *item);
+void send_data_item_to_mqtt(const lora_queue_item_t *item);
