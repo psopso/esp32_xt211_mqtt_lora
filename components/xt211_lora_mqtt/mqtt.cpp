@@ -40,10 +40,12 @@ std::string get_timestamp_string(std::time_t ts) {
     //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
 
     //cJSON *podObjekt = cJSON_CreateObject();  //vytvorim data
-    std::string dt = get_timestamp_string(item->timestamp);
-    cJSON_AddStringToObject(root.get(), "datetime", dt.c_str());
 
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> data(cJSON_CreateObject(), verbose_cjson_delete);
+    std::string dt = get_timestamp_string(item->timestamp);
+    cJSON_AddStringToObject(data.get(), "datetime", dt.c_str());
+
+
     cJSON_AddItemToObject(root.get(), "data", data.get());
     
 
