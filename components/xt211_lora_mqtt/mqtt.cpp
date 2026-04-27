@@ -20,7 +20,7 @@ static const char *const TAG = "mqtt";
       ESP_LOGI("LORA", "--> Pamet pro cJSON objekt byla uspesne smazana!");
   };
 
-  void pokus(lora_status_item_t *item) {
+  void pokus(struct lora_status_item_t *item) {
     ESP_LOGI(TAG, "Pokus v mqtt");
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> root(cJSON_CreateObject(), verbose_cjson_delete);
     if (!root) {
