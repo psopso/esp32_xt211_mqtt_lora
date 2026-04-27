@@ -58,6 +58,6 @@ std::string get_timestamp_string(std::time_t ts) {
       ESP_LOGE("LORA", "Chyba generovani textu");
       return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
     }
-    esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
+    //esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
 
   }
