@@ -50,6 +50,13 @@ std::string get_timestamp_string(std::time_t ts) {
     
 
     //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
-    esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", "Testovaci zprava do mqtt");
-    //std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
+    //sesphome::mqtt::global_mqtt_client->publish("elektromertest1/data", "Testovaci zprava do mqtt");
+    std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
+
+    if (!json_string) {
+      ESP_LOGE("LORA", "Chyba generovani textu");
+      return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
+    }
+    esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
+
   }
