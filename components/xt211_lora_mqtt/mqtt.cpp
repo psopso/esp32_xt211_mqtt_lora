@@ -21,7 +21,7 @@ static const char *const TAG = "mqtt";
   };
 
   void send_data_item_to_mqtt(const lora_queue_item_t *item) {
-    ESP_LOGI(TAG, "Pokus v mqtt");
+    ESP_LOGI(TAG, "send_data_item_to_mqtt");
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> root(cJSON_CreateObject(), verbose_cjson_delete);
     if (!root) {
       ESP_LOGE("LORA", "Malo pameti pro JSON");
