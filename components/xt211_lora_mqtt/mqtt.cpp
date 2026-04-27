@@ -34,7 +34,7 @@ static const char *const TAG = "mqtt";
 
     //cJSON *podObjekt = cJSON_CreateObject();  //vytvorim data
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> data(cJSON_CreateObject(), verbose_cjson_delete);
-    cJSON_AddItemToObject(root, "data", data);
+    cJSON_AddItemToObject(root.get(), "data", data.get());
     
 
     //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
