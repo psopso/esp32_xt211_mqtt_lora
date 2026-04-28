@@ -50,6 +50,9 @@ std::string get_now_timestamp_string(std::time_t ts) {
     //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
 
     std::string dt = get_timestamp_string(item->timestamp);
+    std::string dtnow = get_timestamp_string(get_now_timestamp_string());
+
+    cJSON_AddStringToObject(root.get(), "datetime", dtnow.c:str());
 
     cJSON *data = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "data", data);
