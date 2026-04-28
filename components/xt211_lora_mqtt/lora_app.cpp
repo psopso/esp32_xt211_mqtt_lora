@@ -15,6 +15,10 @@ void LoRaMqttGateway::set_lora_driver(ILoraDriver *driver) {
   this->driver_ = driver;
 }
 
+void LoRaMqttGateway() {
+  std::string mqtt_topic = mqtt::global_mqtt_client->get_topic_manager().get_main_topic();
+}
+
 void LoRaMqttGateway::loop() {
   // Aplikaci je úplně jedno, jaký hardware pod tím běží. 
   // Věří, že dodaný objekt splňuje "smlouvu" ILoraDriver.

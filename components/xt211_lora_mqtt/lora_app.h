@@ -82,12 +82,16 @@ class LoRaMqttGateway : public Component {
  public:
   // Metoda pro předání (bind) driveru zvenčí
   void set_lora_driver(ILoraDriver *driver);
+  
+  // Nastavení komponenty
+  void setup() override;
 
   // Hlavní smyčka komponenty
   void loop() override;
 
  protected:
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
+  std::string mqtt_topic;
 };
 
 } // namespace lora_app
