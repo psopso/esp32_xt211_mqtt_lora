@@ -14,7 +14,7 @@ std::string get_timestamp_string(std::time_t ts) {
     return std::format("{:%a %Y-%m-%d %H:%M:%S GMT}", tp);
 }
 
-std::string get_now_timestamp_string(std::time_t ts) {
+std::string get_now_timestamp_string() {
     auto now = std::chrono::system_clock::now();
     auto epoch = now.time_since_epoch();
     
