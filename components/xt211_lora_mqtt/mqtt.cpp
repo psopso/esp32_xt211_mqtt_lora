@@ -14,17 +14,6 @@ std::string get_timestamp_string(std::time_t ts) {
     return std::format("{:%a %Y-%m-%d %H:%M:%S GMT}", tp);
 }
 
-std::string get_now_timestamp_string() {
-    auto now = std::chrono::system_clock::now();
-    auto epoch = now.time_since_epoch();
-    
-    // 2. Převod na sekundy
-    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(epoch).count();
-    
-    // 3. Uložení do std::string
-    return std::to_string(seconds);
-}
-
   // Vytvoříme si vlastní mazací funkci pro textový řetězec
   auto verbose_free = [](char* ptr) {
       free(ptr);
@@ -50,7 +39,7 @@ std::string get_now_timestamp_string() {
     //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
 
     std::string dt = get_timestamp_string(item->timestamp);
-    std::string dtnow = get_timestamp_string(get_now_timestamp_string());
+    std::string dtnow = get_timestamp_string(std::time(nullptr));
 
     cJSON_AddStringToObject(root.get(), "datetime", dtnow.c:str());
 
