@@ -65,6 +65,6 @@ std::string get_timestamp_string(std::time_t ts) {
 //    }
     std::string base = esphome::mqtt::global_mqtt_client->get_topic_prefix();
     ESP_LOGI(TAG, "Topic1: %s", base.c_str());
-    esphome::mqtt::global_mqtt_client->publish("elektromertest1"+"/data", json_string.get());
+    esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
 
   }
