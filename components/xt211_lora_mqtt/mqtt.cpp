@@ -48,9 +48,9 @@ std::string get_timestamp_string(std::time_t ts) {
     cJSON *values = cJSON_CreateObject();
     cJSON_AddItemToObject(data, "values", values);
     
-    cJSON_AddNumberToObject(values, "1.8.0", (double)round(item->obis_1_8_0_Wh/1000 * 100.0) / 100.0);
+    cJSON_AddNumberToObject(values, "1.8.0", (double)item->obis_1_8_0_Wh/1000.000);
     cJSON_AddNumberToObject(values, "1.8.1", (double)item->obis_1_8_1_Wh/1000.000);
-    cJSON_AddNumberToObject(values, "1.8.2", item->obis_1_8_2_Wh/1000);
+    cJSON_AddNumberToObject(values, "1.8.2", (double)item->obis_1_8_2_Wh/1000.000);
     
 
     //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
