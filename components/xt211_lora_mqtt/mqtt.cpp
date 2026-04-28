@@ -39,6 +39,8 @@ std::string get_timestamp_string(std::time_t ts) {
     //cJSON_AddStringToObject(root.get(), "state", "OK");
     //cJSON_AddNumberToObject(root.get(), "batt_v", 3.2);
 
+    std::string dt = get_timestamp_string(item->timestamp);
+
     cJSON *data = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "data", data);
     cJSON_AddStringToObject(data, "reading_datetime", dt.c_str());
@@ -46,7 +48,6 @@ std::string get_timestamp_string(std::time_t ts) {
     cJSON *values = cJSON_CreateObject();
     cJSON_AddItemToObject(data, "values", values);
     
-    std::string dt = get_timestamp_string(item->timestamp);
     cJSON_AddNumberToObject(values, "1.8.0", item->obis_1_8_0_Wh/1000);
     cJSON_AddNumberToObject(values, "1.8.1", item->obis_1_8_1_Wh/1000);
     cJSON_AddNumberToObject(values, "1.8.2", item->obis_1_8_2_Wh/1000);
