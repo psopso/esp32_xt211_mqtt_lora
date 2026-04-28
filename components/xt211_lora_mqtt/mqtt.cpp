@@ -42,13 +42,13 @@ std::string get_timestamp_string(std::time_t ts) {
     //cJSON *podObjekt = cJSON_CreateObject();  //vytvorim data
 
 //    std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> data(cJSON_CreateObject(), verbose_cjson_delete);
-      cJSON *data = cJSON_CreateObject();
+    cJSON *data = cJSON_CreateObject();
     
-//    std::string dt = get_timestamp_string(item->timestamp);
-//    cJSON_AddStringToObject(data, "datetime", dt.c_str());
+    std::string dt = get_timestamp_string(item->timestamp);
+    cJSON_AddStringToObject(data, "datetime", dt.c_str());
 
 
-//    cJSON_AddItemToObject(root.get(), "data", data.get());
+    cJSON_AddItemToObject(root.get(), "data", data);
     
 
     //mqtt::global_mqtt_client->publish("muj/topic", json_string.get());
@@ -59,6 +59,6 @@ std::string get_timestamp_string(std::time_t ts) {
 //      ESP_LOGE("LORA", "Chyba generovani textu");
 //      return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
 //    }
-    //esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
+    esphome::mqtt::global_mqtt_client->publish("elektromertest1/data", json_string.get());
 
   }
