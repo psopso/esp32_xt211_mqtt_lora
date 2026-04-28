@@ -27,6 +27,7 @@ void LoRaMqttGateway::loop() {
     ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
 
     //Dekodovani paketu
+    ESP_LOGI(TAG, "Topic: ", this->mqtt_topic.c_str());
     process_incoming_packet(pkt.data);
     // Naplánování neblokujícího čekání
     // Identifikátor "test_reply" zajistí, že se časovač při dalším paketu přepíše.
