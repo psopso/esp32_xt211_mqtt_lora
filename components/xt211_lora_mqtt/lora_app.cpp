@@ -16,7 +16,7 @@ void LoRaMqttGateway::set_lora_driver(ILoraDriver *driver) {
 }
 
 void LoRaMqttGateway::setup() {
-  std::string mqtt_topic = mqtt::global_mqtt_client->get_topic_prefix();
+  this->mqtt_topic = mqtt::global_mqtt_client->get_topic_prefix();
 }
 
 void LoRaMqttGateway::loop() {
