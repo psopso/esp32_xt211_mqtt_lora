@@ -36,9 +36,6 @@ typedef struct {
     uint32_t boot_count;       // 4B
     uint32_t wakeup_cycle_count;// 4B
     uint32_t first_boot_time;  // 4B
-    uint16_t wait_time;        // 2B
-    uint8_t wait_time_min;     // 1B
-    uint8_t wait_time_max;     // 1B
     int32_t adaptive_offset;   // 4B
     int16_t ntp_drift_ms;      // 2B (ntp_drift * 1000)
     int8_t rssi;               // 1B
