@@ -62,6 +62,7 @@ void LoRaMqttGateway::loop() {
             ESP_LOGW("LORA_RX", "Cizi paket ignorovan (NetID: 0x%04X)", packet->network_id);
             return;
         }
+        ESP_LOGI(TAG, "Process incomming packet: %d", packet->packet_type);
 
         // 4. Rozvětvení podle typu zprávy
         switch (packet->packet_type) {
