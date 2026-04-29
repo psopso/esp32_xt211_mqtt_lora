@@ -19,6 +19,7 @@ void LoRaMqttGateway::loop() {
   // Aplikaci je úplně jedno, jaký hardware pod tím běží. 
   // Věří, že dodaný objekt splňuje "smlouvu" ILoraDriver.
   while (this->driver_ != nullptr && this->driver_->available()) {
+    ESP_LOGI(TAG, "Pokus: %s", data_topic_);
     auto pkt = this->driver_->read_packet();
     ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
 
