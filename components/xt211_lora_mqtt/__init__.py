@@ -18,6 +18,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(lora_app),
     # Vyžadujeme ID existující komponenty ra02_lora
     cv.Required(CONF_LORA_ID): cv.use_id(ra02_lora_lib.Ra02Lora),
+    cv.Optional("data_topic"): cv.string,
 }).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
