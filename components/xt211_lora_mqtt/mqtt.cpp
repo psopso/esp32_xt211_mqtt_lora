@@ -87,6 +87,7 @@ typedef struct {
       return; // Pokud dojde paměť, prostě vyskočíme. Žádný únik nehrozí.
     }
 
+    std::string dtnow = get_timestamp_string(std::time(nullptr));
     cJSON_AddStringToObject(root.get(), "datetime", dtnow.c_str());
 
     cJSON *status = cJSON_CreateObject();
