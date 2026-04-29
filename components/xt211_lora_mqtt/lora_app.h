@@ -24,6 +24,7 @@ typedef struct {
     uint32_t obis_1_8_1_Wh;   // 4 byty (T1 Wh)
     uint32_t obis_1_8_2_Wh;   // 4 byty (T2 Wh)
     uint8_t first_after_restart; // 1 byt (bool)
+    uint8_t waittime;
 } lora_queue_item_t;          // CELKEM: Jen 17 bajtů na záznam!
 #pragma pack(pop)
 

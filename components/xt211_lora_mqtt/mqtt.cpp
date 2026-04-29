@@ -42,6 +42,7 @@ std::string get_timestamp_string(std::time_t ts) {
     cJSON *data = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "data", data);
     cJSON_AddStringToObject(data, "reading_datetime", dt.c_str());
+    cJSON_AddNumberToObject(data, "wait_time", item->waittime);
 
     cJSON *values = cJSON_CreateObject();
     cJSON_AddItemToObject(data, "values", values);
@@ -64,5 +65,6 @@ std::string get_timestamp_string(std::time_t ts) {
 
   void send_status_to_mqtt(const lora_queue_item_t *item, std::string *topic) {
     ESP_LOGI(TAG, "send_status_to_mqtt");
+//elektromertest/status {"datetime":"Sun Apr 26 16:49:58 2026","Status":{"Status":"OK","StatusText":"After //wakeup","Resets":1,"Wakeups":104,"LastWait":5,"LastWaitMin":5,"LastWaitMax":53,"LastAdaptive":-20,"FirstBootTime":"Sun 2026-04-26 08:16:51 //GMT","BuildDatetime":"2026-04-26 10:14:34","Wifi":"-70","NTPDrift":"0.00","PlannedStartTime":"16:49:35","RealStartTime":"2026-04-26 16:49:35"}}
 
   }
