@@ -93,5 +93,15 @@ typedef struct {
     cJSON *status = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "status", status);
     
-    
+    switch(statusitem->state_code) {
+      case 0: 
+        cJSON_AddStringToObject(status, "Status", "OK");
+  	break;
+      case 1: 
+        cJSON_AddStringToObject(status, "Status", "INIT");
+	break;
+      case 2: 
+        cJSON_AddStringToObject(status, "Status", "FAILED");
+	break;
+    }
   }
