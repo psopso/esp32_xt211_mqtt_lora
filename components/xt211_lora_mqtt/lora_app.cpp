@@ -37,9 +37,6 @@ void LoRaMqttGateway::loop() {
   }
 }
 
-} // namespace lora_app
-} // namespace esphome
-
 // Pomocná funkce pro zpětný překlad kódu na text
     std::string get_state_string(uint8_t code) {
         switch(code) {
@@ -121,3 +118,6 @@ void LoRaMqttGateway::loop() {
                 break;
         }
     }
+
+} // namespace lora_app
+} // namespace esphome
