@@ -89,7 +89,7 @@ class LoRaMqttGateway : public Component {
   void set_battery_topic(const std::string &text) { this->battery_topic_ = text; }
 
   std::string get_state_string(uint8_t code);
-  void process_incoming_packet(const std::vector<uint8_t>& data);
+  void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
  protected:
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
