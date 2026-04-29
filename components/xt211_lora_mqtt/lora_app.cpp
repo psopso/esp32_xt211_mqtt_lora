@@ -23,7 +23,7 @@ void LoRaMqttGateway::loop() {
     ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
 
     //Dekodovani paketu
-    process_incoming_packet(pkt.data);
+    process_incoming_packet(pkt.data, pkt.rssi);
     // Naplánování neblokujícího čekání
     // Identifikátor "test_reply" zajistí, že se časovač při dalším paketu přepíše.
     this->set_timeout("test_reply", 2000, [this]() {
@@ -46,7 +46,7 @@ void LoRaMqttGateway::loop() {
         }
     }
 
-    void LoRaMqttGateway::process_incoming_packet(const std::vector<uint8_t>& data) {
+    void LoRaMqttGateway::process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi) {
 
         // 1. Ochrana proti podtečení paměti (velikost hlavičky)
         if (data.size() < 5) {
@@ -105,7 +105,7 @@ void LoRaMqttGateway::loop() {
 
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %d, Baterie: %.2f V Wakeupcount: %d AdaptiveOffset: %d", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
- 		send_status_to_mqtt(&status, &status_topic_);
+ 		send_status_to_mqtt(&status, &status_topic_, rssi);
                 // Zde publikujeme do text_sensor a sensor komponent v ESPHome
                 // id(status_text_sensor).publish_state(state_text);
                 // id(boot_count_sensor).publish_state(status.boot_count);

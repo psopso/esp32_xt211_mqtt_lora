@@ -76,7 +76,7 @@ typedef struct {
     uint8_t batt_soc;          // 1B (0-100 %)
 } lora_status_item_t; 
 */
-  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic) {
+  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi) {
     ESP_LOGI(TAG, "send_status_to_mqtt");
 //elektromertest/status {"datetime":"Sun Apr 26 16:49:58 2026","Status":{"Status":"OK","StatusText":"After //wakeup","Resets":1,"Wakeups":104,"LastAdaptive":-20,"FirstBootTime":"Sun 2026-04-26 08:16:51 //GMT","BuildDatetime":"2026-04-26 10:14:34","Wifi":"-70","NTPDrift":"0.00","PlannedStartTime":"16:49:35","RealStartTime":"2026-04-26 16:49:35"}}
 
@@ -108,7 +108,7 @@ typedef struct {
     cJSON_AddNumberToObject(status, "Resets", statusitem->boot_count);
     cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
     cJSON_AddNumberToObject(status, "LastAdaptive", statusitem->adaptive_offset);
-    cJSON_AddNumberToObject(status, "WiFi", statusitem->rssi);
+    cJSON_AddNumberToObject(status, "RSSI", rssi);
 
     std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
 
