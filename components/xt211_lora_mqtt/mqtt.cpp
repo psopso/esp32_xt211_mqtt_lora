@@ -105,6 +105,10 @@ typedef struct {
 	break;
     }
     //Stav: OK, Boot count: 1, Baterie: 0.00 V Wakeupcount: 12 AdaptiveOffset: 9
+    //statusitem->first_boot_time
+    std::string dt = get_timestamp_string(statusitem->first_boot_time); 
+    cJSON_AddStringToObject(data, "FirstBootTime", dt.c_str());
+
     cJSON_AddNumberToObject(status, "Resets", statusitem->boot_count);
     cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
     cJSON_AddNumberToObject(status, "LastAdaptive", statusitem->adaptive_offset);
