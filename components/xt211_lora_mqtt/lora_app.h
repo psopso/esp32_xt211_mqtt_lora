@@ -85,9 +85,11 @@ class LoRaMqttGateway : public Component {
   
   // Hlavní smyčka komponenty
   void loop() override;
+  void set_data_topic(const std::string &text) { this->data_topic_ = text; }
 
  protected:
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
+  std::string data_topic_;
 };
 
 } // namespace lora_app

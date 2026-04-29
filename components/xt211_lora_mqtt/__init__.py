@@ -30,3 +30,4 @@ async def to_code(config):
     
     # Zde probíhá samotný "Bind". Předáme instanci hardware do aplikace.
     cg.add(var.set_lora_driver(hw_driver))
+    cg.add(var.set_data_topic(config["data_topic"]))
