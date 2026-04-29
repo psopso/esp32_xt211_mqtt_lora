@@ -58,8 +58,6 @@ std::string get_timestamp_string(std::time_t ts) {
       return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
     }
 
-    std::string base = esphome::mqtt::global_mqtt_client->get_topic_prefix();
-    ESP_LOGI(TAG, "Topic1: %s", base.c_str());
     esphome::mqtt::global_mqtt_client->publish(topic->c_str(), json_string.get());
 
   }
