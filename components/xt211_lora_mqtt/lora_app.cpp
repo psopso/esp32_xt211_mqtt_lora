@@ -87,7 +87,7 @@ void LoRaMqttGateway::loop() {
                     
                     ESP_LOGD("LORA_RX", "Zaznam %d: %s %f kWh %f kWh %f kWh", i, buffer, item.obis_1_8_0_Wh / 1000.0f, item.obis_1_8_1_Wh / 1000.0f, item.obis_1_8_2_Wh / 1000.0f);
                     //Test
-		    send_data_item_to_mqtt(&item);       
+		    send_data_item_to_mqtt(&item, &data_topic_);       
                     // id(sensor_total_kwh).publish_state(total_kwh);
                 }
                 break;

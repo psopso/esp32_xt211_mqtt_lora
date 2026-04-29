@@ -26,7 +26,7 @@ std::string get_timestamp_string(std::time_t ts) {
       ESP_LOGI("LORA", "--> Pamet pro cJSON objekt byla uspesne smazana!");
   };
 
-  void send_data_item_to_mqtt(const lora_queue_item_t *item) {
+  void send_data_item_to_mqtt(const lora_queue_item_t *item, std::string *topic) {
     ESP_LOGI(TAG, "send_data_item_to_mqtt");
     std::unique_ptr<cJSON, decltype(verbose_cjson_delete)> root(cJSON_CreateObject(), verbose_cjson_delete);
     if (!root) {
