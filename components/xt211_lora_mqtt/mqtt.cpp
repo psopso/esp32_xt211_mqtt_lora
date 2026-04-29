@@ -104,4 +104,19 @@ typedef struct {
         cJSON_AddStringToObject(status, "Status", "FAILED");
 	break;
     }
+    //Stav: OK, Boot count: 1, Baterie: 0.00 V Wakeupcount: 12 AdaptiveOffset: 9
+    cJSON_AddNumberToObject(status, "Resets", statusitem->boot_count);
+    cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
+    cJSON_AddNumberToObject(status, "LastAdaptive", statusitem->adaptive_offset);
+    cJSON_AddNumberToObject(status, "WiFi", statusitem->rssi);
+
+    std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
+
+    if (!json_string) {
+      ESP_LOGE("LORA", "Chyba generovani textu");
+      return; // Vyskočíme. C++ se samo postará o zavolání cJSON_Delete(root)!
+    }
+
+    esphome::mqtt::global_mqtt_client->publish(topic->c_str(), json_string.get());
+    
   }
