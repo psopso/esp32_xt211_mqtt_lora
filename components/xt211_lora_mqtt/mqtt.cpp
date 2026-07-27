@@ -119,7 +119,7 @@ typedef struct {
     cJSON_AddNumberToObject(status, "LastAdaptive", statusitem->adaptive_offset);
     cJSON_AddNumberToObject(status, "RSSI", rssi);
 	//statusitem->serialno;
-	char serialno[11];
+	char serialno[14];
     uint64_t rekonstrukce = ((uint64_t)statusitem->serialno.sn2 << 32) | statusitem->serialno.sn1;
 	
 	// %llu formátuje unsigned long long, sizeof(vystupni_text) zajistí, že nepřeteče paměť
