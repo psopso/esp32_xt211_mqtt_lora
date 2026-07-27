@@ -96,7 +96,7 @@ typedef struct {
     cJSON_AddStringToObject(root.get(), "datetime", dtnow.c_str());
 
     cJSON *status = cJSON_CreateObject();
-    cJSON_AddItemToObject(root.get(), "status", status);
+    cJSON_AddItemToObject(root.get(), "Status", status);
     
     switch(statusitem->state_code) {
       case 0: 
