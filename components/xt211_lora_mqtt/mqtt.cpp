@@ -124,7 +124,7 @@ typedef struct {
 	
 	// %llu formátuje unsigned long long, sizeof(vystupni_text) zajistí, že nepřeteče paměť
     snprintf(serialno, sizeof(serialno), "%llu", (unsigned long long)rekonstrukce);
-	cJSON_AddNumberToObject(status, "SerialNo", serialno);
+	cJSON_AddNumberToObject(status, "SerialNo", &serialno);
 
     std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
 
