@@ -1,4 +1,4 @@
-fv#include "esphome/core/log.h"
+#include "esphome/core/log.h"
 #include <memory> // Nutné pro std::unique_ptr
 #include <vector>
 #include <cstdlib> // Nutné pro free()
