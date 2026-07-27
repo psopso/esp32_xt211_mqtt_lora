@@ -1,4 +1,4 @@
-#include "esphome/core/log.h"
+fv#include "esphome/core/log.h"
 #include <memory> // Nutné pro std::unique_ptr
 #include <cstdlib> // Nutné pro free()
 #include "esphome/components/mqtt/mqtt_client.h"
@@ -117,6 +117,13 @@ typedef struct {
     cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
     cJSON_AddNumberToObject(status, "LastAdaptive", statusitem->adaptive_offset);
     cJSON_AddNumberToObject(status, "RSSI", rssi);
+	//statusitem->serialno;
+	char serialno[11];
+    uint64_t rekonstrukce = ((uint64_t)statusitem->serialno.sn2 << 32) | statusitem->serialno.sn1;
+	
+	// %llu formátuje unsigned long long, sizeof(vystupni_text) zajistí, že nepřeteče paměť
+    snprintf(serialno, sizeof(serialno), "%llu", (unsigned long long)rekonstrukce);
+	cJSON_AddNumberToObject(status, "SerialNo", serialno);
 
     std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
 
