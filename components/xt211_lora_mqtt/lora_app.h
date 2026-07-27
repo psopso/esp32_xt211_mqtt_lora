@@ -28,6 +28,13 @@ typedef struct {
 } lora_queue_item_t;          // CELKEM: Jen 17 bajtů na záznam!
 #pragma pack(pop)
 
+#pragma pack(push, 1)
+typedef struct {
+    uint32_t sn1; // 4 bajty
+    uint8_t sn2;  // 1 bajt
+} serialno_t;     //seriové číslo elektroměru 5 bytů
+#pragma pack(pop)
+
 // 2. Zkomprimovaný záznam pro STATUS (Nově přidáno!)
 #pragma pack(push, 1)
 typedef struct {
@@ -41,6 +48,7 @@ typedef struct {
     int8_t rssi;               // 1B
     uint16_t batt_voltage_mv;  // 2B (battery_voltage * 1000)
     uint8_t batt_soc;          // 1B (0-100 %)
+    serialno_t serialno;       // 5 bajtů pro seriové číslo elektroměru
 } lora_status_item_t;          // CELKEM: 28 bajtů (místo původních stovek!)
 #pragma pack(pop)
 
