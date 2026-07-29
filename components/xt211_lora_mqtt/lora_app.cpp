@@ -41,7 +41,7 @@ void LoRaMqttGateway::loop() {
         switch(code) {
             case 0: return "OK";
             case 1: return "SLEEP";
-            case 99: return "ERROR";
+            case 99: return "FAILED";
             default: return "UNKNOWN";
         }
     }
