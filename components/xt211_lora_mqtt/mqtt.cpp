@@ -69,7 +69,7 @@ std::string get_timestamp_string(std::time_t ts) {
   }
 /*
 typedef struct {
-    uint8_t state_code;        // 1B (NapĹ?. 0 = OK, 1 = INIT, 2 = ERROR) mĂ­sto textu
+    uint8_t state_code;        // 1B (NapĹ?. 0 = OK, 1 = INIT, 99 = FAILED) mĂ­sto textu
     uint8_t reason_code;       // 1B (NapĹ?. 0 = WAKEUP, 1 = REBOOT) mĂ­sto textu
     uint32_t boot_count;       // 4B
     uint32_t wakeup_cycle_count;// 4B
@@ -81,7 +81,7 @@ typedef struct {
     uint8_t batt_soc;          // 1B (0-100 %)
 } lora_status_item_t; 
 */
-  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi) {
+  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi, std::string *state_text) {
     ESP_LOGI(TAG, "send_status_to_mqtt");
 //elektromertest/status {"datetime":"Sun Apr 26 16:49:58 2026","Status":{"Status":"OK","StatusText":"After //wakeup","Resets":1,"Wakeups":104,"LastAdaptive":-20,"FirstBootTime":"Sun 2026-04-26 08:16:51 //GMT","BuildDatetime":"2026-04-26 10:14:34","Wifi":"-70","NTPDrift":"0.00","PlannedStartTime":"16:49:35","RealStartTime":"2026-04-26 16:49:35"}}
 
@@ -98,17 +98,19 @@ typedef struct {
     cJSON *status = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "Status", status);
     
-    switch(statusitem->state_code) {
-      case 0: 
-        cJSON_AddStringToObject(status, "Status", "OK");
-  	break;
-      case 1: 
-        cJSON_AddStringToObject(status, "Status", "INIT");
-	break;
-      case 99: 
-        cJSON_AddStringToObject(status, "Status", "FAILED");
-	break;
-    }
+	
+	cJSON_AddStringToObject(status, "Status", *state_text.c_str());
+//    switch(statusitem->state_code) {
+//      case 0: 
+//        cJSON_AddStringToObject(status, "Status", "OK");
+//  	break;
+//      case 1: 
+//        cJSON_AddStringToObject(status, "Status", "INIT");
+//	break;
+//      case 99: 
+//        cJSON_AddStringToObject(status, "Status", "FAILED");
+//	break;
+//    }
     //Stav: OK, Boot count: 1, Baterie: 0.00 V Wakeupcount: 12 AdaptiveOffset: 9
     //statusitem->first_boot_time
     std::string dt = get_timestamp_string(statusitem->first_boot_time); 
