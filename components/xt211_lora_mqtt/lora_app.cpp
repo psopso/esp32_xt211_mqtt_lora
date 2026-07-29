@@ -97,7 +97,7 @@ void LoRaMqttGateway::loop() {
                 const lora_status_item_t &status = packet->payload.status;
 
                 // Překlad stavu zpět na text
-                ESP_LOGI("LORA_RX", "StateCode: %d", status.state_code);
+                //ESP_LOGI("LORA_RX", "StateCode: %d", status.state_code);
                 std::string state_text = get_state_string(status.state_code);
                 
                 // Přepočet driftu a napětí zpět z celých čísel na desetinná

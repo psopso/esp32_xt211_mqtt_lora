@@ -105,7 +105,7 @@ typedef struct {
       case 1: 
         cJSON_AddStringToObject(status, "Status", "INIT");
 	break;
-      case 2: 
+      case 99: 
         cJSON_AddStringToObject(status, "Status", "FAILED");
 	break;
     }
