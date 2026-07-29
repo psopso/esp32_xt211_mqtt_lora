@@ -99,7 +99,7 @@ typedef struct {
     cJSON_AddItemToObject(root.get(), "Status", status);
     
 	
-	cJSON_AddStringToObject(status, "Status", *state_text.c_str());
+	cJSON_AddStringToObject(status, "Status", state_text->c_str());
 //    switch(statusitem->state_code) {
 //      case 0: 
 //        cJSON_AddStringToObject(status, "Status", "OK");
