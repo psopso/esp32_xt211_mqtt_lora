@@ -92,6 +92,14 @@ class LoRaMqttGateway : public Component {
   // Metoda pro předání (bind) driveru zvenčí
   void set_lora_driver(ILoraDriver *driver);
   
+  bool force_ota = false; // Vaše proměnná
+
+  // Tuto metodu zavoláme z YAML
+  void set_force_ota() {
+    this->force_ota = true;
+    ESP_LOGI("LORA_APP", "Tlacitko stisknuto, promenna je nyni TRUE!");
+  }
+  
   // Hlavní smyčka komponenty
   void loop() override;
 
