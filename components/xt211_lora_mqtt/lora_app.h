@@ -9,6 +9,8 @@
 #define MY_SECRET_NETWORK_ID 0xA1B2 // Vymyslete si jakékoliv 16bitové číslo
 #define SENDER_ID_METER      0x01   // ID vašeho elektroměru
 #define SENDER_ID_GATEWAY    0x02   // ID brány
+#define REPLYSTATUSOK		 0x01
+#define REPLYSTATUSOKREQOTA	 0x02
 
 typedef enum {
     MSG_TYPE_METER_DATA, 
