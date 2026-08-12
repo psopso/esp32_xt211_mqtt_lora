@@ -34,8 +34,8 @@ void LoRaMqttGateway::loop() {
 	  
 	  // 1. Vytvoření a naplnění struktury
 	  lora_universal_packet_t pkt;
-	  pkt.network_id = 0x1234;
-	  pkt.sender_id = 0x02;
+	  pkt.network_id = MY_SECRET_NETWORK_ID;  //0x1234;
+	  pkt.sender_id = SENDER_ID_GATEWAY;
 	  pkt.packet_type = 0x02; // např. MSG_TYPE_STATUS
 	  pkt.item_count = 1;
 	  pkt.payload.replystatus = 1;
