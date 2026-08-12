@@ -42,6 +42,7 @@ void LoRaMqttGateway::loop() {
 		pkt.payload.replystatus = 1;
 	  else
 		  pkt.payload.replystatus = 2;
+	  this->force_ota = false;
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
 	  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&pkt);
