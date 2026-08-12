@@ -30,6 +30,16 @@ void LoRaMqttGateway::loop() {
       ESP_LOGI(TAG, "Odesílám testovací odpověď (Ping-Pong)");
       
       // Pošleme jednoduchý payload (např. text "PONG")
+	  //network_id(2),sender_id(1),packettype(1),item_count(1)
+	  
+	  // 1. Vytvoření a naplnění struktury
+	  lora_universal_packet_t pkt;
+	  pkt.network_id = 0x1234;
+	  pkt.sender_id = 0x02;
+	  pkt.packet_type = 0x02; // např. MSG_TYPE_STATUS
+	  pkt.item_count = 1;
+	  pkt.payload.replystatus = 1;
+	  
       std::vector<uint8_t> response = {0x50, 0x4F, 0x4E, 0x47};
       this->driver_->send_packet(response);
     });

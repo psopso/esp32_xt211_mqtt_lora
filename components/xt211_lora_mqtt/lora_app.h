@@ -74,7 +74,8 @@ typedef struct {
     // Šetří to paměť a sjednocuje odesílání!
     union {
         lora_queue_item_t items[LORA_MAX_ITEMS_PER_PACKET]; 
-        lora_status_item_t status;                          
+        lora_status_item_t status;  
+		uint8_t replystatus;
     } payload;
 } lora_universal_packet_t;
 #pragma pack(pop)
