@@ -40,7 +40,10 @@ void LoRaMqttGateway::loop() {
 	  pkt.item_count = 1;
 	  pkt.payload.replystatus = 1;
 	  
-      std::vector<uint8_t> response = {0x50, 0x4F, 0x4E, 0x47};
+	  // 3. Přetypování paměti na bajty a uložení do vektoru
+	  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&pkt);
+	  std::vector<uint8_t> response(bytes, 6);
+//      std::vector<uint8_t> response = {0x50, 0x4F, 0x4E, 0x47};
       this->driver_->send_packet(response);
     });
   }
