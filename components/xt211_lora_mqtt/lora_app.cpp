@@ -38,10 +38,10 @@ void LoRaMqttGateway::loop() {
 	  pkt.sender_id = SENDER_ID_GATEWAY;
 	  pkt.packet_type = 0x02; // např. MSG_TYPE_STATUS
 	  pkt.item_count = 1;
-	  if (this->force_ota == true)
-		pkt.payload.replystatus = 1;
+	  if (this->force_ota)
+		pkt.payload.replystatus = 2;
 	  else
-		  pkt.payload.replystatus = 2;
+		pkt.payload.replystatus = 1;
 	  this->force_ota = false;
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
