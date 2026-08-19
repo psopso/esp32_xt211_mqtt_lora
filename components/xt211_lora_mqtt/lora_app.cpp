@@ -118,8 +118,6 @@ void LoRaMqttGateway::loop() {
                 //ESP_LOGI("LORA_RX", "StateCode: %d", status.state_code);
                 std::string state_text = get_state_string(status.state_code);
                 
-				//uint32_t status_timestamp = status.timestamp;
-				
                 // Přepočet driftu a napětí zpět z celých čísel na desetinná
                 float drift_sec = status.ntp_drift_ms / 1000.0f;
                 float batt_v = status.batt_voltage_mv / 1000.0f;

@@ -40,7 +40,6 @@ typedef struct {
 // 2. Zkomprimovaný záznam pro STATUS (Nově přidáno!)
 #pragma pack(push, 1)
 typedef struct {
-	//uint32_t timestamp;        // 4 byty (UNIX čas)
     uint8_t state_code;        // 1B (Např. 0 = OK, 1 = INIT, 2 = ERROR) místo textu
     uint8_t reason_code;       // 1B (Např. 0 = WAKEUP, 1 = REBOOT) místo textu
     uint32_t boot_count;       // 4B
