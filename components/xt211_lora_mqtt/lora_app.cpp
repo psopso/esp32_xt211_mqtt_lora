@@ -122,7 +122,7 @@ void LoRaMqttGateway::loop() {
                 float drift_sec = status.ntp_drift_ms / 1000.0f;
                 double batt_v = status.batt_voltage_mv / 1000.0f;
 				batt_v = std::round(batt_v * 100.0f) / 100.0f;
-				double soc = status.soc;
+				double soc = status.batt_soc;
 				
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
