@@ -81,7 +81,7 @@ typedef struct {
     uint8_t batt_soc;          // 1B (0-100 %)
 } lora_status_item_t; 
 */
-  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi, std::string *state_text, float batt_v) {
+  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi, std::string *state_text, double batt_v) {
     ESP_LOGI(TAG, "send_status_to_mqtt");
 //elektromertest/status {"datetime":"Sun Apr 26 16:49:58 2026","Status":{"Status":"OK","StatusText":"After //wakeup","Resets":1,"Wakeups":104,"LastAdaptive":-20,"FirstBootTime":"Sun 2026-04-26 08:16:51 //GMT","BuildDatetime":"2026-04-26 10:14:34","Wifi":"-70","NTPDrift":"0.00","PlannedStartTime":"16:49:35","RealStartTime":"2026-04-26 16:49:35"}}
 
