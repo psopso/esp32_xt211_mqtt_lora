@@ -124,7 +124,7 @@ void LoRaMqttGateway::loop() {
 
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
- 		send_status_to_mqtt(&status, &status_topic_, rssi, &state_text);
+				send_status_to_mqtt(&status, &status_topic_, rssi, &state_text,batt_v);
                 // Zde publikujeme do text_sensor a sensor komponent v ESPHome
                 // id(status_text_sensor).publish_state(state_text);
                 // id(boot_count_sensor).publish_state(status.boot_count);

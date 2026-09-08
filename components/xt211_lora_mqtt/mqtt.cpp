@@ -81,7 +81,7 @@ typedef struct {
     uint8_t batt_soc;          // 1B (0-100 %)
 } lora_status_item_t; 
 */
-  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi, std::string *state_text) {
+  void send_status_to_mqtt(const lora_status_item_t *statusitem, std::string *topic, int16_t rssi, std::string *state_text, float batt_v) {
     ESP_LOGI(TAG, "send_status_to_mqtt");
 //elektromertest/status {"datetime":"Sun Apr 26 16:49:58 2026","Status":{"Status":"OK","StatusText":"After //wakeup","Resets":1,"Wakeups":104,"LastAdaptive":-20,"FirstBootTime":"Sun 2026-04-26 08:16:51 //GMT","BuildDatetime":"2026-04-26 10:14:34","Wifi":"-70","NTPDrift":"0.00","PlannedStartTime":"16:49:35","RealStartTime":"2026-04-26 16:49:35"}}
 
@@ -96,7 +96,9 @@ typedef struct {
     cJSON_AddStringToObject(root.get(), "datetime", dtnow.c_str());
 
     cJSON *status = cJSON_CreateObject();
+	cJSON *battery = cJSON_CreateObject();
     cJSON_AddItemToObject(root.get(), "Status", status);
+	cJSON_AddItemToObject(root.get(), "Battery", battery);
     
 	
 	cJSON_AddStringToObject(status, "Status", state_text->c_str());
@@ -128,6 +130,8 @@ typedef struct {
     snprintf(serialno, sizeof(serialno), "%llu", (unsigned long long)rekonstrukce);
 	if (strcmp(serialno, "0") != 0)
 		cJSON_AddStringToObject(status, "SerialNo", serialno);
+	
+	cJSON_AddNumberToObject(battery, "Voltage", batt_v);
 
     std::unique_ptr<char, decltype(verbose_free)> json_string(cJSON_PrintUnformatted(root.get()), verbose_free);
 
