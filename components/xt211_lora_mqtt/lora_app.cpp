@@ -140,11 +140,11 @@ void LoRaMqttGateway::loop() {
         }
     }
 
-void MyComponent::setup() {
+void LoRaMqttGateway::setup() {
   // inicializace
 }
 
-void MyComponent::update() {
+void LoRaMqttGateway::update() {
 //  int value = /* získání hodnoty, např. z registru, čidla apod. */;
 //  if (this->my_sensor_ != nullptr) {
 //    this->my_sensor_->publish_state(value);
