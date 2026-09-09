@@ -146,8 +146,8 @@ void LoRaMqttGateway::loop() {
 
 	void LoRaMqttGateway::update() {
 	  int value = 0/* získání hodnoty, např. z registru, čidla apod. */;
-	  if (this->my_sensor_ != nullptr) {
-		this->my_sensor_->publish_state(value);
+	  if (this->time_diff_sensor_ != nullptr) {
+		this->time_diff_sensor_->publish_state(value);
 	  }
 	}
 
