@@ -140,5 +140,16 @@ void LoRaMqttGateway::loop() {
         }
     }
 
+void MyComponent::setup() {
+  // inicializace
+}
+
+void MyComponent::update() {
+//  int value = /* získání hodnoty, např. z registru, čidla apod. */;
+//  if (this->my_sensor_ != nullptr) {
+//    this->my_sensor_->publish_state(value);
+//  }
+}
+
 } // namespace lora_app
 } // namespace esphome

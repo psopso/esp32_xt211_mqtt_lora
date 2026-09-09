@@ -91,6 +91,9 @@ namespace lora_app {
 
 class LoRaMqttGateway : public PollingComponent {
  public:
+  void setup() override;
+  void update() override;  // volá se periodicky (interval z PollingComponent)
+
   // Metoda pro předání (bind) driveru zvenčí
   void set_lora_driver(ILoraDriver *driver);
   
