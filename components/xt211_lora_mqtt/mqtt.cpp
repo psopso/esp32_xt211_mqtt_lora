@@ -93,6 +93,7 @@ typedef struct {
     }
 
     std::string dtnow = get_timestamp_string(std::time(nullptr));
+	//status.eps32_time;
     cJSON_AddStringToObject(root.get(), "datetime", dtnow.c_str());
 
     cJSON *status = cJSON_CreateObject();
@@ -116,7 +117,9 @@ typedef struct {
     //Stav: OK, Boot count: 1, Baterie: 0.00 V Wakeupcount: 12 AdaptiveOffset: 9
     //statusitem->first_boot_time
     std::string dt = get_timestamp_string(statusitem->first_boot_time); 
+    std::string dt1 = get_timestamp_string(statusitem->esp32_time); 
     cJSON_AddStringToObject(status, "FirstBootTime", dt.c_str());
+    cJSON_AddStringToObject(status, "ESP32time", dt1.c_str());
 
     cJSON_AddNumberToObject(status, "Resets", statusitem->boot_count);
     cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
