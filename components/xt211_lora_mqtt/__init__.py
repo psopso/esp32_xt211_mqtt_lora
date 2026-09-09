@@ -26,6 +26,10 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional("data_topic"): cv.string,
     cv.Optional("status_topic"): cv.string,
     cv.Optional("battery_topic"): cv.string,
+    cv.Optional(CONF_MY_SENSOR): sensor.sensor_schema(
+        unit_of_measurement="",
+        accuracy_decimals=0,
+    ),
 }).extend(cv.COMPONENT_SCHEMA)
 
 async def to_code(config):
@@ -44,5 +48,3 @@ async def to_code(config):
     if CONF_TIME_DIFF_SENSOR in config:
         sens = await sensor.new_sensor(config[CONF_TIME_DIFF_SENSOR])
         cg.add(var.set_time_diff_sensor(sens))
-
-        
