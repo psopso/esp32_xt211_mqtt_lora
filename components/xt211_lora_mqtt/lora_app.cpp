@@ -140,16 +140,16 @@ void LoRaMqttGateway::loop() {
         }
     }
 
-void LoRaMqttGateway::setup() {
-  // inicializace
-}
+	void LoRaMqttGateway::setup() {
+	  // inicializace
+	}
 
-void LoRaMqttGateway::update() {
-//  int value = /* získání hodnoty, např. z registru, čidla apod. */;
-//  if (this->my_sensor_ != nullptr) {
-//    this->my_sensor_->publish_state(value);
-//  }
-}
+	void LoRaMqttGateway::update() {
+	  int value = 0/* získání hodnoty, např. z registru, čidla apod. */;
+	  if (this->my_sensor_ != nullptr) {
+		this->my_sensor_->publish_state(value);
+	  }
+	}
 
 } // namespace lora_app
 } // namespace esphome
