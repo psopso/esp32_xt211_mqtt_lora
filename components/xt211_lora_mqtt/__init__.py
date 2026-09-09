@@ -30,7 +30,7 @@ CONFIG_SCHEMA = cv.Schema({
         unit_of_measurement="",
         accuracy_decimals=0,
     ),
-}).extend(cv.COMPONENT_SCHEMA)
+}).extend(cv.polling_component_schema("60s"))
 
 async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
