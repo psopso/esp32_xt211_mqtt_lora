@@ -11,6 +11,8 @@ AUTO_LOAD = ["sensor"]
 
 CONF_LORA_ID = "lora_id"
 
+CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
+
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
@@ -38,3 +40,9 @@ async def to_code(config):
     cg.add(var.set_data_topic(config["data_topic"]))
     cg.add(var.set_status_topic(config["status_topic"]))
     cg.add(var.set_battery_topic(config["battery_topic"]))
+
+    if CONF_TIME_DIFF_SENSOR in config:
+        sens = await sensor.new_sensor(config[CONF_TIME_DIFF_SENSOR])
+        cg.add(var.set_time_diff_sensor(sens))
+
+        
