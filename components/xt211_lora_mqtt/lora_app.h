@@ -1,6 +1,7 @@
 #pragma once
 
 #include "esphome/core/component.h"
+#include "esphome/components/sensor/sensor.h"
 //#include "esphome/components/lora_common/ilora_driver.h"
 #include "esphome/components/ra02_lora_lib/ilora_driver.h"
 #include "esphome/components/mqtt/mqtt_client.h"
@@ -88,7 +89,7 @@ typedef struct {
 namespace esphome {
 namespace lora_app {
 
-class LoRaMqttGateway : public Component {
+class LoRaMqttGateway : public PollingComponent {
  public:
   // Metoda pro předání (bind) driveru zvenčí
   void set_lora_driver(ILoraDriver *driver);
