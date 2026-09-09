@@ -26,7 +26,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Optional("data_topic"): cv.string,
     cv.Optional("status_topic"): cv.string,
     cv.Optional("battery_topic"): cv.string,
-    cv.Optional(CONF_MY_SENSOR): sensor.sensor_schema(
+    cv.Optional(CONF_TIME_DIFF_SENSOR): sensor.sensor_schema(
         unit_of_measurement="",
         accuracy_decimals=0,
     ),
