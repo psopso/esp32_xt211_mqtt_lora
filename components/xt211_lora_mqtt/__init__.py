@@ -7,6 +7,8 @@ from esphome.components import sensor
 # Tímto importem získáme přístup k definici driveru
 from .. import ra02_lora_lib
 
+AUTO_LOAD = ["sensor"]
+
 CONF_LORA_ID = "lora_id"
 
 # ... (standardní importy) ...
