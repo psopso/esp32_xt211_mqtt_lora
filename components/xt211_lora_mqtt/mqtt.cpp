@@ -116,8 +116,13 @@ typedef struct {
 //    }
     //Stav: OK, Boot count: 1, Baterie: 0.00 V Wakeupcount: 12 AdaptiveOffset: 9
     //statusitem->first_boot_time
+	//ESP_LOGI(TAG, "send_status_to_mqtt");
+
     std::string dt = get_timestamp_string(statusitem->first_boot_time); 
     std::string dt1 = get_timestamp_string(statusitem->esp32_time); 
+	long rozdil = statusitem->esp32_time - std::time(nullptr);
+	ESP_LOGI(TAG, "Rozdil casu je: %ld sekund", rozdil);
+	
     cJSON_AddStringToObject(status, "FirstBootTime", dt.c_str());
     cJSON_AddStringToObject(status, "ESP32time", dt1.c_str());
 
