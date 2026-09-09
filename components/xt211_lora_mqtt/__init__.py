@@ -16,7 +16,7 @@ CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
-lora_app = lora_app_ns.class_('LoRaMqttGateway', cg.Component)
+lora_app = lora_app_ns.class_('LoRaMqttGateway', cg.PollingComponent)
 
 # Parametry pro YAML
 CONFIG_SCHEMA = cv.Schema({
