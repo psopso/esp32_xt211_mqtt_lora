@@ -127,7 +127,7 @@ void LoRaMqttGateway::loop() {
 				double soc = status.batt_soc;
 				
 				long time_now = std::time(nullptr);
-				long esp32time = status->esp32_time;
+				long esp32time = status.esp32_time;
 				long rozdil = esp32time - time_now;
 				
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
