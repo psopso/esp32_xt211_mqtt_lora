@@ -1,7 +1,8 @@
 #include "lora_app.h"
 #include "esphome/core/log.h"
 #include <vector>
-#include "common.h"
+
+extern int sensor_value;
 
 void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
