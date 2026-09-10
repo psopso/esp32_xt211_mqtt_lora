@@ -123,6 +123,8 @@ typedef struct {
     std::string dt1 = get_timestamp_string(statusitem->esp32_time); 
 	long rozdil = statusitem->esp32_time - std::time(nullptr);
 	ESP_LOGI(TAG, "Rozdil casu je: %ld sekund", rozdil);
+
+	sensor_value = (int)rozdil;
 	
     cJSON_AddStringToObject(status, "FirstBootTime", dt.c_str());
     cJSON_AddStringToObject(status, "ESP32time", dt1.c_str());
