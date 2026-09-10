@@ -1,6 +1,7 @@
 #include "lora_app.h"
 #include "esphome/core/log.h"
 #include <vector>
+#include "config.h"
 
 void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
@@ -145,7 +146,7 @@ void LoRaMqttGateway::loop() {
 	}
 
 	void LoRaMqttGateway::update() {
-	  int value = 0/* získání hodnoty, např. z registru, čidla apod. */;
+	  int value = sensor_value; /* získání hodnoty, např. z registru, čidla apod. */
 	  if (this->time_diff_sensor_ != nullptr) {
 		this->time_diff_sensor_->publish_state(value);
 	  }
