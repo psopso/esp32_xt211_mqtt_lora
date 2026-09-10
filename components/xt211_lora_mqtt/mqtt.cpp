@@ -5,7 +5,7 @@
 #include "esphome/components/mqtt/mqtt_client.h"
 #include "cJSON.h"
 #include "mqtt.h"
-#include "config.h"
+#include "common.h"
 
 static const char *const TAG = "mqtt";
 

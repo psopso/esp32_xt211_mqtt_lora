@@ -1,7 +1,7 @@
 #include "lora_app.h"
 #include "esphome/core/log.h"
 #include <vector>
-#include "config.h"
+#include "common.h"
 
 void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
