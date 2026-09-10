@@ -5,8 +5,8 @@
 #include "esphome/components/mqtt/mqtt_client.h"
 #include "cJSON.h"
 #include "mqtt.h"
-#include "common.h"
 
+int sensor_value = 0;
 static const char *const TAG = "mqtt";
 
 std::string get_timestamp_string(std::time_t ts) {
