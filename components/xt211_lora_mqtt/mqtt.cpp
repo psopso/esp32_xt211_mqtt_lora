@@ -127,7 +127,7 @@ typedef struct {
 	sensor_value = (int)rozdil;
 	
     cJSON_AddStringToObject(status, "FirstBootTime", dt.c_str());
-    cJSON_AddStringToObject(status, "ESP32time", dt1.c_str());
+//    cJSON_AddStringToObject(status, "ESP32time", dt1.c_str());
 
     cJSON_AddNumberToObject(status, "Resets", statusitem->boot_count);
     cJSON_AddNumberToObject(status, "Wakeups", statusitem->wakeup_cycle_count);
