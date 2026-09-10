@@ -119,7 +119,7 @@ typedef struct {
     //statusitem->first_boot_time
 	//ESP_LOGI(TAG, "send_status_to_mqtt");
 
-//    std::string dt = get_timestamp_string(statusitem->first_boot_time); 
+    std::string dt = get_timestamp_string(statusitem->first_boot_time); 
 //    std::string dt1 = get_timestamp_string(statusitem->esp32_time); 
 //	long rozdil = statusitem->esp32_time - std::time(nullptr);
 	ESP_LOGI(TAG, "Rozdil casu je: %ld sekund", rozdil);
