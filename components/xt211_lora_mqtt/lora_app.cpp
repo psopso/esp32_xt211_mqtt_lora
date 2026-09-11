@@ -67,7 +67,7 @@ void LoRaMqttGateway::loop() {
     }
 
     void LoRaMqttGateway::process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi) {
-
+		long time_now = std::time(nullptr);
         // 1. Ochrana proti podtečení paměti (velikost hlavičky)
         if (data.size() < 5) {
             ESP_LOGW("LORA_RX", "Paket je prilis kratky!");
@@ -126,7 +126,7 @@ void LoRaMqttGateway::loop() {
 				batt_v = std::round(batt_v * 100.0f) / 100.0f;
 				double soc = status.batt_soc;
 				
-				long time_now = std::time(nullptr);
+				
 				long esp32time = status.esp32_time;
 				long rozdil = esp32time - time_now;
 				
