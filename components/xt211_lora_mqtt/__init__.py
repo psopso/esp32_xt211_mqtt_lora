@@ -4,6 +4,9 @@ import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.const import CONF_ID
 from esphome.components import sensor
+
+from esphome.components.esp32 import include_builtin_idf_component
+
 # Tímto importem získáme přístup k definici driveru
 from .. import ra02_lora_lib
 
@@ -33,6 +36,7 @@ CONFIG_SCHEMA = cv.Schema({
 }).extend(cv.polling_component_schema("10s"))
 
 async def to_code(config):
+    include_builtin_idf_component("json")
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
 
