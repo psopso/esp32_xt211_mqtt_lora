@@ -7,13 +7,11 @@ from esphome.components import sensor
 # Tímto importem získáme přístup k definici driveru
 from .. import ra02_lora_lib
 
-AUTO_LOAD = ["sensor"]
+AUTO_LOAD = ["sensor", "json"]
 
 CONF_LORA_ID = "lora_id"
 
 CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
-
-DEPENDENCIES = ['json']
 
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
