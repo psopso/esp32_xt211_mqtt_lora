@@ -13,6 +13,8 @@ CONF_LORA_ID = "lora_id"
 
 CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
 
+DEPENDENCIES = ['json']
+
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
 lora_app_ns = cg.esphome_ns.namespace('lora_app')
