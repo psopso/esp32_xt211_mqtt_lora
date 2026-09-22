@@ -81,6 +81,7 @@ typedef struct {
         lora_status_item_t status;  
 		uint8_t replystatus;
     } payload;
+	uint16_t crc;             // 2 B - Kontrolní součet VŽDY NA KONCI
 } lora_universal_packet_t;
 #pragma pack(pop)
 
