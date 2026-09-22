@@ -68,6 +68,13 @@ typedef struct {
     lora_queue_item_t items[LORA_MAX_ITEMS_PER_PACKET]; // 4 * 17 = 68 bajtů  8*17+5=141
 } lora_data_payload_t;        // CELÝ PAKET: 70?? bajtů (Ideální pro LoRa!)
 */
+
+typedef struct {
+	uint8_t replystatus;
+	uint32_t esp32_time;
+} lora_reply_status;          // CELKEM: 
+#pragma pack(pop)
+
 typedef struct {
     uint16_t network_id;      // 2 bajty
     uint8_t sender_id;        // 1 bajt
@@ -79,7 +86,7 @@ typedef struct {
     union {
         lora_queue_item_t items[LORA_MAX_ITEMS_PER_PACKET]; 
         lora_status_item_t status;  
-		uint8_t replystatus;
+		lora_reply_status lorareplystatus;
     } payload;
 	uint16_t crc;             // 2 B - Kontrolní součet VŽDY NA KONCI
 } lora_universal_packet_t;
