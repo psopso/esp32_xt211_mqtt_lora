@@ -43,7 +43,7 @@ void LoRaMqttGateway::loop() {
 	  if (this->force_ota)
 		pkt.payload.lorareplystatus.replystatus	= 2;
 	  else
-		pkt.payload.lorareplaystatus.replystatus = 1;
+		pkt.payload.lorareplystatus.replystatus = 1;
 	  this->force_ota = false;
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
