@@ -133,6 +133,8 @@ class LoRaMqttGateway : public PollingComponent {
   std::string battery_topic_;
 };
 
+size_t get_packet_payload_len(const lora_universal_packet_t *pkt);
+
 } // namespace lora_app
 } // namespace esphome
 

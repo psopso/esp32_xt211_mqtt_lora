@@ -165,5 +165,23 @@ void LoRaMqttGateway::loop() {
 	  }
 	}
 
+	size_t get_packet_payload_len(const lora_universal_packet_t *pkt) {
+		size_t header_len = sizeof(pkt->network_id) + 
+						   sizeof(pkt->sender_id) + 
+						   sizeof(pkt->packet_type) + 
+						   sizeof(pkt->item_count); // 5 bajtů
+
+		switch (pkt->packet_type) {
+			case MSG_TYPE_METER_DATA:
+				return header_len + (pkt->item_count * sizeof(lora_queue_item_t));
+			case MSG_TYPE_STATUS:
+				return header_len + sizeof(lora_status_item_t);
+			case MSG_TYPE_REPLYSTATUS:
+				return header_len + sizeof(lora_reply_status);
+			default:
+				return header_len;
+		}
+	}
+
 } // namespace lora_app
 } // namespace esphome
