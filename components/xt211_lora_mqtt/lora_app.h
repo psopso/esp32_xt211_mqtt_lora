@@ -16,7 +16,8 @@
 typedef enum {
     MSG_TYPE_METER_DATA, 
     MSG_TYPE_STATUS,     
-    MSG_TYPE_BATTERY     
+    MSG_TYPE_BATTERY,
+	MSG_TYPE_REPLYSTATUS	
 } comm_msg_type_t;
 
 // 1. Zkomprimovaný JEDEN záznam pro LoRa

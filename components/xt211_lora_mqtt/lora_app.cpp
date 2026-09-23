@@ -38,7 +38,7 @@ void LoRaMqttGateway::loop() {
 	  lora_universal_packet_t pkt;
 	  pkt.network_id = MY_SECRET_NETWORK_ID;  //0x1234;
 	  pkt.sender_id = SENDER_ID_GATEWAY;
-	  pkt.packet_type = 0x02; // např. MSG_TYPE_STATUS
+	  pkt.packet_type = 0x03; // např. MSG_TYPE_REPLYSTATUS
 	  pkt.item_count = 1;
 	  if (this->force_ota)
 		pkt.payload.lorareplystatus.replystatus	= 2;
