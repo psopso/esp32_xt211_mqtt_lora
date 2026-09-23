@@ -49,10 +49,10 @@ void LoRaMqttGateway::loop() {
 	  this->force_ota = false;
 	  
 	  // 1. Spočítáme velikost dat BEZ pole crc
-      size_t data_len = sizeof(lora_universal_packet_t) - sizeof(pkt->crc);
+      size_t data_len = sizeof(lora_universal_packet_t) - sizeof(pkt.crc);
 	  // 2. Vypočítáme CRC z těla paketu
 	  const uint8_t *bytes = reinterpret_cast<const uint8_t*>(&pkt);
-      pkt->crc = esp_rom_crc16_le(0, bytes, data_len);
+      pkt.crc = esp_rom_crc16_le(0, bytes, data_len);
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
 //	  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&pkt);
