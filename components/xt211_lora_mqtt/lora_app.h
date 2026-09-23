@@ -6,6 +6,7 @@
 #include "esphome/components/ra02_lora_lib/ilora_driver.h"
 #include "esphome/components/mqtt/mqtt_client.h"
 #include "cJSON.h"
+#include "esp_rom_crc.h"
 
 #define MY_SECRET_NETWORK_ID 0xA1B2 // Vymyslete si jakékoliv 16bitové číslo
 #define SENDER_ID_METER      0x01   // ID vašeho elektroměru
