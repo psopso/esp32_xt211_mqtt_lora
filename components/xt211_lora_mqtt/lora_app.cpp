@@ -52,14 +52,14 @@ void LoRaMqttGateway::loop() {
 	  size_t data_len = get_packet_payload_len(&pkt);
 //      size_t data_len = 10;  //sizeof(lora_universal_packet_t) - sizeof(pkt.crc);
 	  // 2. Vypočítáme CRC z těla paketu
-	  const uint8_t *bytes[] = reinterpret_cast<const uint8_t*>(&pkt);
+	  const uint8_t *bytes = reinterpret_cast<const uint8_t*>(&pkt);
 //      pkt.crc = esp_rom_crc16_le(0, bytes, data_len);
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
 //	  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&pkt);
 	  uint16_t crc = esp_rom_crc16_le(0, bytes, data_len);
-	  *bytes[data_len]     = (uint8_t)(crc & 0xFF);        // Dolní bajt
-	  *bytes[data_len + 1] = (uint8_t)((crc >> 8) & 0xFF); // Horní bajt
+	  bytes[data_len]     = (uint8_t)(crc & 0xFF);        // Dolní bajt
+	  bytes[data_len + 1] = (uint8_t)((crc >> 8) & 0xFF); // Horní bajt
 	  
 	  size_t real_size = data_len + 2;
 	  std::vector<uint8_t> response(bytes, bytes + real_size);
