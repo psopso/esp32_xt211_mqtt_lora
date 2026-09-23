@@ -74,7 +74,6 @@ typedef struct {
 	uint8_t replystatus;
 	uint32_t esp32_time;
 } lora_reply_status;          // CELKEM: 
-#pragma pack(pop)
 
 typedef struct {
     uint16_t network_id;      // 2 bajty
