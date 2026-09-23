@@ -72,7 +72,7 @@ typedef struct {
 
 typedef struct {
 	uint8_t replystatus;
-	uint32_t esp32_time;
+	uint32_t ntp_time;
 } lora_reply_status;          // CELKEM: 
 
 typedef struct {
