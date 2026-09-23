@@ -41,7 +41,7 @@ void LoRaMqttGateway::loop() {
 	  pkt.packet_type = 0x03; // např. MSG_TYPE_REPLYSTATUS
 	  pkt.item_count = 1;
 	  time_t epoch_time = time(NULL);
-	  pkt->payload.lorareplystatus.ntp_time = (uint32_t)epoch_time;
+	  pkt.payload.lorareplystatus.ntp_time = (uint32_t)epoch_time;
 	  if (this->force_ota)
 		pkt.payload.lorareplystatus.replystatus	= 2;
 	  else
