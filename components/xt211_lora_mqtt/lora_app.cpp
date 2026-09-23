@@ -57,8 +57,10 @@ void LoRaMqttGateway::loop() {
 	  
 	  // 3. Přetypování paměti na bajty a uložení do vektoru
 //	  const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&pkt);
-	  uint16_t *crc = bytes + data_len;
-	  crc = esp_rom_crc16_le(0, bytes, data_len);
+	  uint16_t crc = esp_rom_crc16_le(0, bytes, data_len);
+	  bytes[data_len]     = (uint8_t)(crc & 0xFF);        // Dolní bajt
+	  bytes[data_len + 1] = (uint8_t)((crc >> 8) & 0xFF); // Horní bajt
+	  
 	  size_t real_size = data_len + 2;
 	  std::vector<uint8_t> response(bytes, bytes + real_size);
 //      std::vector<uint8_t> response = {0x50, 0x4F, 0x4E, 0x47};
