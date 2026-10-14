@@ -99,8 +99,7 @@ void LoRaMqttGateway::loop() {
         ESP_LOGI(TAG, "Process incomming packet: %d", packet->packet_type);
 
         // 4. Rozvětvení podle typu zprávy
-        switch (packet->packet_type) {
-            
+        switch (packet->packet_type) {            
             case MSG_TYPE_METER_DATA: {
                 ESP_LOGI("LORA_RX", "Prijata DATA (polozek: %d)", packet->item_count);
                 
@@ -143,7 +142,9 @@ void LoRaMqttGateway::loop() {
 				
 				long esp32time = status.esp32_time;
 				long rozdil = esp32time - time_now;
-				
+		
+		rssi_sensor_value = rssi;
+		
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
 				send_status_to_mqtt(&status, &status_topic_, rssi, &state_text, batt_v, soc, rozdil);

@@ -15,6 +15,7 @@ AUTO_LOAD = ["sensor", "json"]
 CONF_LORA_ID = "lora_id"
 
 CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
+CONF_RSSI_SENSOR = "rssi_sensor"
 
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
@@ -51,4 +52,8 @@ async def to_code(config):
 
     if CONF_TIME_DIFF_SENSOR in config:
         sens = await sensor.new_sensor(config[CONF_TIME_DIFF_SENSOR])
+        cg.add(var.set_time_diff_sensor(sens))
+
+    if CONF_RSSI_SENSOR in config:
+        sens = await sensor.new_sensor(config[CONF_RSSI_SENSOR])
         cg.add(var.set_time_diff_sensor(sens))
