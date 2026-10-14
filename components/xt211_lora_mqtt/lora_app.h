@@ -28,8 +28,8 @@ typedef struct {
     uint32_t obis_1_8_0_Wh;   // 4 byty (Total Wh)
     uint32_t obis_1_8_1_Wh;   // 4 byty (T1 Wh)
     uint32_t obis_1_8_2_Wh;   // 4 byty (T2 Wh)
-    uint8_t first_after_restart; // 1 byt (bool)
-    uint8_t waittime;
+    uint8_t first_after_restart; // 1 byte (bool)
+    uint8_t waittime;         // 1 byte 
 } lora_queue_item_t;          // CELKEM: Jen 17 bajtů na záznam!
 #pragma pack(pop)
 
@@ -101,6 +101,7 @@ namespace lora_app {
 class LoRaMqttGateway : public PollingComponent {
  public:
   void set_time_diff_sensor(sensor::Sensor *sensor) { time_diff_sensor_ = sensor; }
+  void set_rssi_sensor(sensor::Sensor *sensor) { rssi_sensor_ = sensor; }
   void setup() override;
   void update() override;  // volá se periodicky (interval z PollingComponent)
 
@@ -127,6 +128,7 @@ class LoRaMqttGateway : public PollingComponent {
 
  protected:
   sensor::Sensor *time_diff_sensor_{nullptr};
+  sensor::Sensor *rssi_sensor_{nullptr};
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
   std::string data_topic_;
   std::string status_topic_;

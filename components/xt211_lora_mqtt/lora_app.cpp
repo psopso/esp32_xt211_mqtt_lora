@@ -3,6 +3,7 @@
 #include <vector>
 
 extern int sensor_value;
+int rssi_sensor_value = 0;
 
 void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
@@ -165,8 +166,12 @@ void LoRaMqttGateway::loop() {
 
 	void LoRaMqttGateway::update() {
 	  int value = sensor_value; /* získání hodnoty, např. z registru, čidla apod. */
+	  int rssivalue = rssi_sensor_value; /* získání hodnoty, např. z registru, čidla apod. */
 	  if (this->time_diff_sensor_ != nullptr) {
 		this->time_diff_sensor_->publish_state(value);
+	  }
+	  if (this->rssi_sensor_ != nullptr) {
+		this->rssi_sensor_->publish_state(rssivalue);
 	  }
 	}
 
