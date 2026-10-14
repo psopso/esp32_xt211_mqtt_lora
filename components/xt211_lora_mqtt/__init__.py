@@ -34,6 +34,10 @@ CONFIG_SCHEMA = cv.Schema({
         unit_of_measurement="",
         accuracy_decimals=0,
     ),
+    cv.Optional(CONF_RSSI_SENSOR): sensor.sensor_schema(
+        unit_of_measurement="",
+        accuracy_decimals=0,
+    ),
 }).extend(cv.polling_component_schema("10s"))
 
 async def to_code(config):
@@ -56,4 +60,4 @@ async def to_code(config):
 
     if CONF_RSSI_SENSOR in config:
         sens = await sensor.new_sensor(config[CONF_RSSI_SENSOR])
-        cg.add(var.set_time_diff_sensor(sens))
+        cg.add(var.set_rssi_sensor(sens))
