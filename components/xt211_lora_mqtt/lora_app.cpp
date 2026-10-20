@@ -30,11 +30,8 @@ void LoRaMqttGateway::loop() {
     // Naplánování neblokujícího čekání
     // Identifikátor "test_reply" zajistí, že se časovač při dalším paketu přepíše.
     this->set_timeout("test_reply", 2000, [this]() {
-      ESP_LOGI(TAG, "Odesílám testovací odpověď (Ping-Pong)");
-      
-      // Pošleme jednoduchý payload (např. text "PONG")
-	  //network_id(2),sender_id(1),packettype(1),item_count(1)
-	  
+	  ESP_LOGI(TAG, "Odesílám odpověď");
+    	  
 	  // 1. Vytvoření a naplnění struktury
 	  lora_universal_packet_t pkt;
 	  pkt.network_id = MY_SECRET_NETWORK_ID;  //0x1234;
@@ -108,17 +105,17 @@ void LoRaMqttGateway::loop() {
                     const lora_queue_item_t &item = packet->payload.items[i];
                     //item.timestamp
 
-		    time_t ts = item.timestamp;
-		    struct tm *utc = gmtime(&ts);
-		    char buffer[20];
-		    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", utc);
+					time_t ts = item.timestamp;
+					struct tm *utc = gmtime(&ts);
+					char buffer[20];
+					strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", utc);
 
                     // Dekomprese dat (zpet na desetinná čísla, pokud to HA vyžaduje)
                     float total_kwh = item.obis_1_8_0_Wh / 1000.0f;
                     
                     ESP_LOGD("LORA_RX", "Zaznam %d: %s %f kWh %f kWh %f kWh", i, buffer, item.obis_1_8_0_Wh / 1000.0f, item.obis_1_8_1_Wh / 1000.0f, item.obis_1_8_2_Wh / 1000.0f);
                     //Test
-		    send_data_item_to_mqtt(&item, &data_topic_);       
+					send_data_item_to_mqtt(&item, &data_topic_);       
                     // id(sensor_total_kwh).publish_state(total_kwh);
                 }
                 break;
