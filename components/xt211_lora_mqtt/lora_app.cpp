@@ -5,7 +5,7 @@
 extern int sensor_value;
 int rssi_sensor_value = 0;
 
-void process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
+bool process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
 namespace esphome {
 namespace lora_app {
@@ -26,7 +26,7 @@ void LoRaMqttGateway::loop() {
     ESP_LOGI(TAG, "Přijato %d bajtů, RSSI: %d", pkt.data.size(), pkt.rssi);
 
     //Dekodovani paketu
-    process_incoming_packet(pkt.data, pkt.rssi);
+    bool b = process_incoming_packet(pkt.data, pkt.rssi);
     // Naplánování neblokujícího čekání
     // Identifikátor "test_reply" zajistí, že se časovač při dalším paketu přepíše.
     this->set_timeout("test_reply", 2000, [this]() {
@@ -80,12 +80,13 @@ void LoRaMqttGateway::loop() {
         }
     }
 
-    void LoRaMqttGateway::process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi) {
+    bool LoRaMqttGateway::process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi) {
 		long time_now = std::time(nullptr);
+		bool err = false;
         // 1. Ochrana proti podtečení paměti (velikost hlavičky)
         if (data.size() < 5) {
             ESP_LOGW("LORA_RX", "Paket je prilis kratky!");
-            return;
+			return false;
         }
 
         // 2. Přetypování přijatých bytů na naši strukturu
@@ -94,7 +95,7 @@ void LoRaMqttGateway::loop() {
         // 3. Bezpečnostní kontrola sítě
         if (packet->network_id != 0xA1B2) {
             ESP_LOGW("LORA_RX", "Cizi paket ignorovan (NetID: 0x%04X)", packet->network_id);
-            return;
+			return false;
         }
         ESP_LOGI(TAG, "Process incomming packet: %d", packet->packet_type);
 
@@ -143,7 +144,7 @@ void LoRaMqttGateway::loop() {
 				long esp32time = status.esp32_time;
 				long rozdil = esp32time - time_now;
 		
-		rssi_sensor_value = rssi;
+				rssi_sensor_value = rssi;
 		
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
@@ -152,13 +153,16 @@ void LoRaMqttGateway::loop() {
                 // id(status_text_sensor).publish_state(state_text);
                 // id(boot_count_sensor).publish_state(status.boot_count);
                 // id(battery_v_sensor).publish_state(batt_v);
+				return true;
                 break;
             }
 
             default:
                 ESP_LOGW("LORA_RX", "Neznamy typ paketu: %d", packet->packet_type);
+				err = true;
                 break;
         }
+		return not err;
     }
 
 	void LoRaMqttGateway::setup() {
