@@ -4,7 +4,7 @@
 
 extern int sensor_value;
 int rssi_sensor_value = 0;
-int status_sensor = 0;
+int status_sensor_value = 0;
 
 bool process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 
@@ -143,6 +143,7 @@ void LoRaMqttGateway::loop() {
 				long rozdil = esp32time - time_now;
 		
 				rssi_sensor_value = rssi;
+				status_sensor_value = status.state_code;
 		
                 ESP_LOGI("LORA_RX", "Stav: %s, Boot count: %ld, Baterie: %.2f V Wakeupcount: %ld AdaptiveOffset: %ld", 
                          state_text.c_str(), status.boot_count, batt_v, status.wakeup_cycle_count, status.adaptive_offset);
