@@ -102,6 +102,7 @@ class LoRaMqttGateway : public PollingComponent {
  public:
   void set_time_diff_sensor(sensor::Sensor *sensor) { time_diff_sensor_ = sensor; }
   void set_rssi_sensor(sensor::Sensor *sensor) { rssi_sensor_ = sensor; }
+  void set_status_sensor(sensor::Sensor *sensor) { status_sensor_ = sensor; }
   void setup() override;
   void update() override;  // volá se periodicky (interval z PollingComponent)
 
@@ -129,6 +130,7 @@ class LoRaMqttGateway : public PollingComponent {
  protected:
   sensor::Sensor *time_diff_sensor_{nullptr};
   sensor::Sensor *rssi_sensor_{nullptr};
+  sensor::Sensor *status_sensor_{nullptr};
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
   std::string data_topic_;
   std::string status_topic_;

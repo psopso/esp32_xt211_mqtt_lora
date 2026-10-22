@@ -16,6 +16,7 @@ CONF_LORA_ID = "lora_id"
 
 CONF_TIME_DIFF_SENSOR = "time_diff_sensor"
 CONF_RSSI_SENSOR = "rssi_sensor"
+CONF_STATUS_SENSOR = "status_sensor"
 
 # ... (standardní importy) ...
 # Definice C++ namespace a třídy
@@ -35,6 +36,10 @@ CONFIG_SCHEMA = cv.Schema({
         accuracy_decimals=0,
     ),
     cv.Optional(CONF_RSSI_SENSOR): sensor.sensor_schema(
+        unit_of_measurement="",
+        accuracy_decimals=0,
+    ),
+    cv.Optional(CONF_STATUS_SENSOR): sensor.sensor_schema(
         unit_of_measurement="",
         accuracy_decimals=0,
     ),
@@ -61,3 +66,7 @@ async def to_code(config):
     if CONF_RSSI_SENSOR in config:
         sens = await sensor.new_sensor(config[CONF_RSSI_SENSOR])
         cg.add(var.set_rssi_sensor(sens))
+
+    if CONF_STATUS_SENSOR in config:
+        sens = await sensor.new_sensor(config[CONF_STATUS_SENSOR])
+        cg.add(var.set_status_sensor(sens))
