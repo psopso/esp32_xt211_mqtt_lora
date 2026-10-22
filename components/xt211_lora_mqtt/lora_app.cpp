@@ -171,7 +171,7 @@ void LoRaMqttGateway::loop() {
 	void LoRaMqttGateway::update() {
 	  int value = sensor_value; /* získání hodnoty, např. z registru, čidla apod. */
 	  int rssivalue = rssi_sensor_value; /* získání hodnoty, např. z registru, čidla apod. */
-	  int statusvalue = 0;
+	  int statusvalue = status_sensor_value;
 	  if (this->time_diff_sensor_ != nullptr) {
 		this->time_diff_sensor_->publish_state(value);
 	  }
