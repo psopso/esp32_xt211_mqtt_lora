@@ -1,4 +1,4 @@
-,#include "lora_app.h"
+#include "lora_app.h"
 #include "esphome/core/log.h"
 #include <vector>
 
