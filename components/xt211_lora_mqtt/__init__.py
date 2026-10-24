@@ -40,9 +40,7 @@ CONFIG_SCHEMA = cv.Schema({
         unit_of_measurement="",
         accuracy_decimals=0,
     ),
-    cv.Optional(CONF_STATUS_SENSOR): sensor.sensor_schema(
-        unit_of_measurement="",
-        accuracy_decimals=0,
+    cv.Optional(CONF_STATUS_SENSOR): text_sensor.text_sensor_schema(
     ),
 }).extend(cv.polling_component_schema("10s"))
 
