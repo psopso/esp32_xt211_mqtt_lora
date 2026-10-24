@@ -102,7 +102,7 @@ class LoRaMqttGateway : public PollingComponent {
  public:
   void set_time_diff_sensor(sensor::Sensor *sensor) { time_diff_sensor_ = sensor; }
   void set_rssi_sensor(sensor::Sensor *sensor) { rssi_sensor_ = sensor; }
-  void set_status_sensor(sensor::Sensor *sensor) { status_sensor_ = sensor; }
+  void set_status_sensor(text_sensor::TextSensor *sensor) { status_sensor_ = sensor; }
   void setup() override;
   void update() override;  // volá se periodicky (interval z PollingComponent)
 
