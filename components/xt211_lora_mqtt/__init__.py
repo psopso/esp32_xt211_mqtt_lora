@@ -4,6 +4,7 @@ import esphome.config_validation as cv
 import esphome.codegen as cg
 from esphome.const import CONF_ID
 from esphome.components import sensor
+from esphome.components import text_sensor
 
 from esphome.components.esp32 import include_builtin_idf_component
 
@@ -68,5 +69,5 @@ async def to_code(config):
         cg.add(var.set_rssi_sensor(sens))
 
     if CONF_STATUS_SENSOR in config:
-        sens = await textsensor.new_sensor(config[CONF_STATUS_SENSOR])
+        sens = await text_sensor.new_sensor(config[CONF_STATUS_SENSOR])
         cg.add(var.set_status_sensor(sens))
