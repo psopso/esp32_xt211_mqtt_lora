@@ -69,5 +69,5 @@ async def to_code(config):
         cg.add(var.set_rssi_sensor(sens))
 
     if CONF_STATUS_SENSOR in config:
-        sens = await text_sensor.new_sensor(config[CONF_STATUS_SENSOR])
+        sens = await TextSensor.new_sensor(config[CONF_STATUS_SENSOR])
         cg.add(var.set_status_sensor(sens))
