@@ -1,10 +1,10 @@
-#include "lora_app.h"
+,#include "lora_app.h"
 #include "esphome/core/log.h"
 #include <vector>
 
 extern int sensor_value;
 int rssi_sensor_value = 0;
-std::string status_sensor_value = '';
+std::string status_sensor_value = 'no';
 
 bool process_incoming_packet(const std::vector<uint8_t>& data, int16_t rssi);
 

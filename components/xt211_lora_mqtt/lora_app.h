@@ -130,7 +130,7 @@ class LoRaMqttGateway : public PollingComponent {
  protected:
   sensor::Sensor *time_diff_sensor_{nullptr};
   sensor::Sensor *rssi_sensor_{nullptr};
-  sensor::Sensor *status_sensor_{nullptr};
+  text_sensor::TextSensor *status_sensor_{nullptr};
   ILoraDriver *driver_{nullptr}; // Ukazatel na obecné rozhraní
   std::string data_topic_;
   std::string status_topic_;
