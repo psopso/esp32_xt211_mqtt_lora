@@ -42,7 +42,7 @@ void LoRaMqttGateway::loop() {
 	  time_t epoch_time = time(NULL);
 	  pkt.payload.lorareplystatus.ntp_time = (uint32_t)epoch_time;
 	  if (this->force_ota)
-		ESP_LOGI(TAG, "Force_OTA
+		ESP_LOGI(TAG, "Force_OTA");
 		pkt.payload.lorareplystatus.replystatus	= 2;
 	  else
 		pkt.payload.lorareplystatus.replystatus = 1;
