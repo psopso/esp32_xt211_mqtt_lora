@@ -73,6 +73,7 @@ void LoRaMqttGateway::loop() {
         switch(code) {
             case 0: return "OK";
             case 1: return "SLEEP";
+            case 2: return "RS485TIMEOUT";
             case 99: return "FAILED";
             default: return "UNKNOWN";
         }
