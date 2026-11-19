@@ -2,7 +2,6 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
-#include "esphome/components/sensor/textsensor.h"
 //#include "esphome/components/lora_common/ilora_driver.h"
 #include "esphome/components/ra02_lora_lib/ilora_driver.h"
 #include "esphome/components/mqtt/mqtt_client.h"
